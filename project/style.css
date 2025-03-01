@@ -1,0 +1,68 @@
+@font-face {
+    font-family: 'Trajan Pro';
+    src: url('ofont.ru_Trajan.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.title {
+    background-image: url('background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.pcplay {
+    display: flex;
+    position: fixed;
+    color: #7382e1;
+    background-color: white;
+    font-family: 'Trajan Pro';
+    bottom: 150px;
+    right: 20px;
+    padding: 10px 10px;
+    border-color: #7382e1;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.frplay {
+    display: flex;
+    position: fixed;
+    color: #7382e1;
+    background-color: white;
+    font-family: 'Trajan Pro';
+    bottom: 70px;
+    right: 20px;
+    padding: 10px 10px;
+    border-color: #7382e1;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 2px;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background-color: lightblue;
+    border: 1px solid #007bff;
+    cursor: pointer;
+}
+
+.cell.ship {
+    background-color: gray;
+}
