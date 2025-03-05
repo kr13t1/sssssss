@@ -41,28 +41,79 @@
     font-size: 20px;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
+.battlefield {
+	width: 860px;
+	height: 530px;
+	position: relative;
+	margin: 0 auto;
+	background: url('grid.png') repeat;
 }
 
-.gameboard {
-    display: grid;
-    grid-template-columns: repeat(10, 40px);
-    grid-template-rows: repeat(10, 40px);
-    gap: 2px;
-    margin: 20px auto;
-    width: fit-content;
+.ships {
+	width: 330px;
+	height: 330px;
+	position: relative;
+	left: 29px;
+	top: 27px;
 }
 
-.cell {
-    width: 40px;
-    height: 40px;
-    background-color: lightblue;
-    border: 1px solid #007bff;
+.text-top {
+    font-family: 'Trajan Pro';
+	height: 66px;
+	font-size: 22px;
+	line-height: 66px;
+	text-align: center;
+	margin-bottom: 7px;
+}
+.text-btm {
+	color: #c00;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.field {
+	width: 366px;
+	height: 363px;
+    padding-left: 38px;
+	position: relative;
+	background: url('bg_play_field.png') no-repeat;
+}
+
+.field-computer {
+	margin-left: 31px;
+}
+
+.instruction {
+	margin-left: 430px;
+}
+
+.type-placement-box .link {
+    font-family: 'Trajan Pro';
+    font-size: 20px;
     cursor: pointer;
+    display: block;
+    color: #7382e1;
+    background-color: white;
+    margin: 10px auto;
+    padding: 10px;
+    border-color: #7382e1;
+    border-radius: 5px;
 }
 
-.cell.ship {
-    background-color: gray;
+.btn {
+	width: 144px;
+	height: 45px;
+	font-family: 'Trajan Pro';
+	font-size: 14px;
+	line-height: 40px;
+	color: #7382e1;
+    border-color: #7382e1;
+    background-color: white;
+	text-align: center;
+	background-position: 0 -150px;
+	cursor: pointer;
+}
+
+.ship, .icon-field, .btn-play {
+	background: url('sprite.png') no-repeat;
 }
