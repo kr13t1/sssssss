@@ -49,6 +49,15 @@
 	background: url('grid.png') repeat;
 }
 
+.flex {
+    display: flex;
+}
+
+.outer {
+    margin-bottom: 21px; 
+    padding-left: 38px;
+}
+
 .ships {
 	width: 330px;
 	height: 330px;
@@ -62,7 +71,8 @@
 	height: 66px;
 	font-size: 22px;
 	line-height: 66px;
-	text-align: center;
+    justify-content: center;
+	align-items: center;
 	margin-bottom: 7px;
 }
 .text-btm {
@@ -74,7 +84,6 @@
 .field {
 	width: 366px;
 	height: 363px;
-    padding-left: 38px;
 	position: relative;
 	background: url('bg_play_field.png') no-repeat;
 }
@@ -84,7 +93,8 @@
 }
 
 .instruction {
-	margin-left: 430px;
+	margin-left: 26px;
+    position: relative;
 }
 
 .type-placement-box .link {
@@ -117,3 +127,31 @@
 .ship, .icon-field, .btn-play {
 	background: url('sprite.png') no-repeat;
 }
+
+.ships {
+    width: 330px; 
+    height: 330px; 
+    position: relative; 
+    left: 29px; 
+    top: 27px;
+}
+
+.ship {
+    height: 35px; 
+    position: absolute;
+}
+
+.initial-ships li {height: 35px; position: relative; overflow: hidden; margin-top: 31px;}
+.initial-ships .ship {left: 0; top: 0; float: left; cursor: move;}
+.initial-ships .tripledeck1 {left: 164px;}
+.initial-ships .tripledeck2 {left: 297px;}
+.initial-ships .doubledeck2 {left: 99px;}
+.initial-ships .doubledeck3 {left: 197px;}
+.initial-ships .singledeck2 {left: 65px;}
+.initial-ships .singledeck3 {left: 131px;}
+.initial-ships .singledeck4 {left: 197px;}
+
+.fourdeck {width: 134px; background-position: 0 0;}
+.tripledeck {width: 101px; background-position: -150px 0;}
+.doubledeck {width: 68px; background-position: -270px 0;}
+.singledeck {width: 35px; background-position: -360px 0;}
