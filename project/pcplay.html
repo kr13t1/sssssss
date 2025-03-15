@@ -4,50 +4,52 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Морской бой - Расстановка кораблей</title>
 	<link href="style.css" rel="stylesheet">
-	<div class="battlefield">
-		<div id="text_top" class="flex text-top">Расстановка кораблей</div>
-		<div class="flex outer">
-			<!-- field human -->
-			<div class="field field-human">
-				<div id="field_human" class="ships"></div>
-			</div>
-			<!-- /field human -->
+	<div class="wrap">
+		<div class="battlefield">
+			<div id="text_top" class="flex text-top">Расстановка кораблей</div>
+			<div class="flex outer">
+				<!-- field human -->
+				<div class="field field-human">
+					<div id="field_human" class="ships"></div>
+				</div>
+				<!-- /field human -->
 
-			<!-- field computer -->
-			<div class="field field-computer" hidden>
-				<div id="field_computer" class="ships"></div>
-			</div>
-			<!-- /field computer -->
+				<!-- field computer -->
+				<div class="field field-computer" hidden>
+					<div id="field_computer" class="ships"></div>
+				</div>
+				<!-- /field computer -->
 
-			<!-- instruction -->
-			<div id="instruction" class="instruction">
-				<button class="link" data-target="random">Случайным образом</button>
-				<div id="ships_collection" class="ships-collection">
-					<p>Перетащите мышкой корабли на игровое поле.</p>
-					<ul class="initial-ships">
-						<li>
-							<div id="fourdeck1" class="ship fourdeck"></div>
-							<div id="tripledeck1" class="ship tripledeck tripledeck1"></div>
-							<div id="tripledeck2" class="ship tripledeck tripledeck2"></div>
-						</li>
-						<li>
-							<div id="doubledeck1" class="ship doubledeck"></div>
-							<div id="doubledeck2" class="ship doubledeck doubledeck2"></div>
-							<div id="doubledeck3" class="ship doubledeck doubledeck3"></div>
-						</li>
-						<li>
-							<div id="singledeck1" class="ship singledeck"></div>
-							<div id="singledeck2" class="ship singledeck singledeck2"></div>
-							<div id="singledeck3" class="ship singledeck singledeck3"></div>
-							<div id="singledeck4" class="ship singledeck singledeck4"></div>
-						</li>
-					</ul>
+				<!-- instruction -->
+				<div id="instruction" class="instruction">
+					<div id="ships_collection" class="ships-collection">
+						<p>Перетащите корабли на игровое поле.</p>
+						<ul class="initial-ships">
+							<li>
+								<div id="fourdeck1" class="ship fourdeck"></div>
+								<div id="tripledeck1" class="ship tripledeck tripledeck1"></div>
+								<div id="tripledeck2" class="ship tripledeck tripledeck2"></div>
+							</li>
+							<li>
+								<div id="doubledeck1" class="ship doubledeck"></div>
+								<div id="doubledeck2" class="ship doubledeck doubledeck2"></div>
+								<div id="doubledeck3" class="ship doubledeck doubledeck3"></div>
+							</li>
+							<li>
+								<div id="singledeck1" class="ship singledeck"></div>
+								<div id="singledeck2" class="ship singledeck singledeck2"></div>
+								<div id="singledeck3" class="ship singledeck singledeck3"></div>
+								<div id="singledeck4" class="ship singledeck singledeck4"></div>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div>
-			<button id="play" class="btn">Играть</button>
-			<button id="play" class="btn">Выйти из игры</button>
+			<button class="link" data-target="random">Случайным образом</button>
+			<div>
+				<button id="play" class="btn">Играть</button>
+				<button id="play" class="btn">Выйти из игры</button>
+			</div>
 		</div>
 	</div>
 </html>

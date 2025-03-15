@@ -5,6 +5,23 @@
     font-style: normal;
 }
 
+ul, li {
+    margin: 0; 
+    padding: 0; 
+    border: 0; 
+    vertical-align: baseline;
+}
+
+p {
+    margin-top: 5px;
+    margin-bottom: 33px;
+    margin-left: 20px;
+    color: #7382e1;
+    font-family: 'Trajan Pro';
+    position: relative;
+    margin-right: 50px;
+}
+
 .title {
     background-image: url('background.png');
     background-repeat: no-repeat;
@@ -41,6 +58,12 @@
     font-size: 20px;
 }
 
+.wrap {
+    width: 1024px; 
+    margin: 0 auto; 
+    padding: 20px;
+}
+
 .battlefield {
 	width: 860px;
 	height: 530px;
@@ -58,14 +81,6 @@
     padding-left: 38px;
 }
 
-.ships {
-	width: 330px;
-	height: 330px;
-	position: relative;
-	left: 29px;
-	top: 27px;
-}
-
 .text-top {
     font-family: 'Trajan Pro';
 	height: 66px;
@@ -74,6 +89,8 @@
     justify-content: center;
 	align-items: center;
 	margin-bottom: 7px;
+    color: #7382e1;
+
 }
 .text-btm {
 	color: #c00;
@@ -93,21 +110,22 @@
 }
 
 .instruction {
-	margin-left: 26px;
+	margin-left: 25px;
     position: relative;
 }
 
-.type-placement-box .link {
+.link {
     font-family: 'Trajan Pro';
-    font-size: 20px;
+    font-size: 14px;
     cursor: pointer;
-    display: block;
+    display: flex;
     color: #7382e1;
     background-color: white;
     margin: 10px auto;
     padding: 10px;
     border-color: #7382e1;
     border-radius: 5px;
+    align-self: auto;
 }
 
 .btn {
@@ -132,7 +150,7 @@
     width: 330px; 
     height: 330px; 
     position: relative; 
-    left: 29px; 
+    left: 20px; 
     top: 27px;
 }
 
@@ -142,12 +160,12 @@
 }
 
 .initial-ships li {height: 35px; position: relative; overflow: hidden; margin-top: 31px;}
-.initial-ships .ship {left: 0; top: 0; float: left; cursor: move;}
+.initial-ships .ship {left: 0px; top: 0px; float: left; cursor: move;}
 .initial-ships .tripledeck1 {left: 164px;}
 .initial-ships .tripledeck2 {left: 297px;}
 .initial-ships .doubledeck2 {left: 99px;}
 .initial-ships .doubledeck3 {left: 197px;}
-.initial-ships .singledeck2 {left: 65px;}
+.initial-ships .singledeck2 {left: 64px;}
 .initial-ships .singledeck3 {left: 131px;}
 .initial-ships .singledeck4 {left: 197px;}
 
