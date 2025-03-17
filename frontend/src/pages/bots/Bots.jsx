@@ -5,7 +5,7 @@ import { Ship } from '../../components/ui/ship/Ship';
 import { DndContext } from '@dnd-kit/core';
 import { useState } from 'react';
 import { DropField } from '../../components/ui/dropField/dropField';
-// import { useData } from '../../../store/game';
+// import { useData } from '../../store/game';
 import { Background } from '../../components/ui/background/Background';
 
 // TODO: удалить, перенести в стор

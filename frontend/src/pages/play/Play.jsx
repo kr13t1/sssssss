@@ -1,4 +1,4 @@
-import { useData } from '../../../store/game';
+import { useData } from '../../store/game';
 import { Background } from '../../components/ui/background/Background';
 import css from './Play.module.css';
 
