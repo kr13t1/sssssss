@@ -1,0 +1,32 @@
+.active {
+  width: max-content;
+  color: VAR(--purple-blue);
+  background-color: rgb(255, 255, 255);
+  border: 2.5px solid VAR(--purple-blue);
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px;
+
+  user-select: none;
+}
+
+.noActive {
+  width: max-content;
+  color: VAR(--light-gray);
+  background-color: rgb(255, 255, 255);
+  border: 2.5px solid VAR(--light-gray);
+  border-radius: 5px;
+  cursor: not-allowed;
+  padding: 10px;
+}
+
+.small {
+  font-size: 14px;
+}
+
+.medium {
+  font-size: 20px;
+}
+
+.large {
+}

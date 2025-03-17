@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Trajan Pro';
+  src: url('./assets/fonts/ofont.ru_Trajan.ttf');
+}
+
+:root {
+  font-family: 'Trajan Pro', 'Times New Roman', Times, serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: content-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100vw;
+}

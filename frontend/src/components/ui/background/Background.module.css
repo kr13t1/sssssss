@@ -1,0 +1,14 @@
+.container {
+  width: 1124px;
+  height: 655px;
+  background-image: url('../../../assets/grid.png');
+  border: 2px solid VAR(--purple-blue);
+  border-radius: 5px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 40px;
+}

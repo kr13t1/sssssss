@@ -1,0 +1,10 @@
+.mainStyle {
+  height: 35px;
+
+  background-color: VAR(--purple-blue);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+}
