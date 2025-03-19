@@ -12,17 +12,15 @@ import { HintModal } from '../../components/ui/hintModal/HintModal';
 // TODO: удалить, перенести в стор
 const TEMP_DATA = [
   { id: 'ship1', size: 4, position: [] },
-  { id: 'ship2', size: 4, position: [] },
+  { id: 'ship2', size: 3, position: [] },
   { id: 'ship3', size: 3, position: [] },
-  { id: 'ship4', size: 3, position: [] },
-  { id: 'ship5', size: 3, position: [] },
+  { id: 'ship4', size: 2, position: [] },
+  { id: 'ship5', size: 2, position: [] },
   { id: 'ship6', size: 2, position: [] },
-  { id: 'ship7', size: 2, position: [] },
-  { id: 'ship8', size: 2, position: [] },
+  { id: 'ship7', size: 1, position: [] },
+  { id: 'ship8', size: 1, position: [] },
   { id: 'ship9', size: 1, position: [] },
   { id: 'ship10', size: 1, position: [] },
-  { id: 'ship11', size: 1, position: [] },
-  { id: 'ship12', size: 1, position: [] },
 ];
 
 // TODO: вынести

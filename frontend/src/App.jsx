@@ -6,6 +6,7 @@ import Layout from './pages/Layout';
 import Home from './pages/home/Home';
 import Bots from './pages/bots/Bots';
 import Play from './pages/play/Play';
+import BotField from './pages/play/Play';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="bots" element={<Bots />} />
-        <Route path="play" element={<Play />} />
+        <Route path="play" element={<BotField />} />
       </Route>
     </Routes>
   );
