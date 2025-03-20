@@ -38,3 +38,38 @@
 
   /* background-color: aqua; */
 }
+
+.h2text {
+  font-size: 22px;
+  color: VAR(--purple-blue);
+  font-weight: 500;
+}
+
+.TEMP_SPAN {
+  margin-left: 88px;
+}
+
+.TEMP_KLETKA {
+  width: 33px;
+  height: 33px;
+
+  cursor: pointer;
+}
+
+.TEMP_KLETKA_EST {
+  width: 33px;
+  height: 33px;
+
+  background-color: red;
+
+  cursor: no-drop;
+}
+
+.TEMP_KLETKA_NET {
+  width: 33px;
+  height: 33px;
+
+  background-color: rgba(0, 0, 0, 0.3);
+
+  cursor: no-drop;
+}

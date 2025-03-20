@@ -3,39 +3,45 @@ import { Button } from '../../components/ui/button/button';
 import { useNavigate } from 'react-router-dom';
 import { Ship } from '../../components/ui/ship/Ship';
 import { DndContext } from '@dnd-kit/core';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { DropField } from '../../components/ui/dropField/dropField';
-// import { useData } from '../../store/game';
+import { useData } from '../../store/game';
 import { Background } from '../../components/ui/background/Background';
 import { HintModal } from '../../components/ui/hintModal/HintModal';
 
-// TODO: удалить, перенести в стор
-const TEMP_DATA = [
-  { id: 'ship1', size: 4, position: [] },
-  { id: 'ship2', size: 3, position: [] },
-  { id: 'ship3', size: 3, position: [] },
-  { id: 'ship4', size: 2, position: [] },
-  { id: 'ship5', size: 2, position: [] },
-  { id: 'ship6', size: 2, position: [] },
-  { id: 'ship7', size: 1, position: [] },
-  { id: 'ship8', size: 1, position: [] },
-  { id: 'ship9', size: 1, position: [] },
-  { id: 'ship10', size: 1, position: [] },
-];
-
-// TODO: вынести
 const generateRandomNum = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// TODO: вынести
+const getNeighbors = (cell) => {
+  const line = Math.floor((cell - 1) / 10);
+  const column = (cell - 1) % 10;
+
+  const neighbors = [];
+
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      const newLine = i + line;
+      const newColumn = j + column;
+
+      if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
+        continue;
+      }
+
+      neighbors.push(newLine * 10 + newColumn + 1);
+    }
+  }
+
+  return neighbors;
+};
+
 const fillPositions = (data) => {
   let newShips = data.map((ship) => ({ ...ship, position: [] }));
 
   const taken_pos = new Set();
 
   newShips = newShips.map((ship) => {
-    let newPos;
+    let newPos = [];
 
     check: while (true) {
       let line = generateRandomNum(0, 9) * 10;
@@ -43,7 +49,11 @@ const fillPositions = (data) => {
 
       newPos = Array.from({ length: ship.size }, (_, i) => line + column + i);
 
-      if (newPos.every((pos) => !taken_pos.has(pos))) {
+      const taken_zone = new Set([...taken_pos]);
+
+      taken_pos.forEach((pos) => getNeighbors(pos).forEach((n) => taken_zone.add(n)));
+
+      if (newPos.every((pos) => !taken_zone.has(pos))) {
         break check;
       }
     }
@@ -58,8 +68,7 @@ const fillPositions = (data) => {
 
 const Bots = () => {
   const nav = useNavigate();
-
-  const [data, setData] = useState(TEMP_DATA);
+  const { data, setData, updateShipPosition } = useData();
   const [dragCurrShip, setDragCurrShip] = useState(null);
   const [activeHint, setActiveHint] = useState(false);
 
@@ -71,32 +80,55 @@ const Bots = () => {
     }
   };
 
-  // TODO: переделать, т.к проблема с перетаскиванием
   const handleDragEnd = ({ active, over }) => {
     if (!over || !dragCurrShip) {
       return;
     }
 
+    console.log(over);
+    // console.log(active);
+
     const startIndex = Number(over.id);
 
     const startLine = Math.floor((startIndex - 1) / 10) * 10 + 1;
-    const endLine = startLine + 10 - 1;
+    const endLine = startLine + 9;
 
-    const newPosition =
-      startIndex + dragCurrShip.size - 1 > endLine
-        ? Array.from({ length: dragCurrShip.size }, (_, i) => endLine - dragCurrShip.size + 1 + i)
-        : Array.from({ length: dragCurrShip.size }, (_, i) => startIndex + i);
+    let newPosition = [];
 
-    const taken_pos = new Set(data.flatMap((ship) => (ship.id !== active.id ? ship.position : [])));
+    if (dragCurrShip.position.length > 0) {
+      const tailIndex = startIndex;
+      const headIndex = tailIndex - dragCurrShip.size + 1;
 
-    if (newPosition.some((pos) => taken_pos.has(pos))) {
+      if (headIndex < startLine) {
+        return;
+      }
+
+      newPosition = Array.from({ length: dragCurrShip.size }, (_, i) => headIndex + i);
+    } else {
+      const headIndex = startIndex;
+
+      if (headIndex + dragCurrShip.size - 1 > endLine) {
+        return;
+      }
+
+      newPosition = Array.from({ length: dragCurrShip.size }, (_, i) => headIndex + i);
+    }
+
+    const taken_ships = data.filter((ship) => ship.id !== active.id);
+
+    const taken = new Set();
+
+    taken_ships.forEach((ship) => {
+      ship.position.forEach((cell) => {
+        getNeighbors(cell).forEach((n) => taken.add(n));
+      });
+    });
+
+    if (newPosition.some((pos) => taken.has(pos))) {
       return;
     }
 
-    setData((prevShips) =>
-      prevShips.map((ship) => (ship.id === active.id ? { ...ship, position: newPosition } : ship)),
-    );
-
+    updateShipPosition(active.id, newPosition);
     setDragCurrShip(null);
   };
 
@@ -106,7 +138,7 @@ const Bots = () => {
         status={activeHint}
         title={'Это подсказка'}
         desc={
-          'Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. '
+          'Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки. Это описание данной подсказки.'
         }
         changeStatus={() => {
           setActiveHint(false);
@@ -114,7 +146,13 @@ const Bots = () => {
       />
       <div className={css.mainContainer}>
         <div className={css.hintContent}>
-          <Button status={true} size={'medium'} onClick={() => setActiveHint(true)}>
+          <Button
+            status={true}
+            size={'medium'}
+            onClick={() => {
+              setActiveHint(true);
+            }}
+          >
             ?
           </Button>
         </div>
@@ -126,7 +164,6 @@ const Bots = () => {
                 <div className={css.gameFielContent}>
                   {Array.from({ length: 100 }, (_, index) => {
                     const ship = data.find((s) => s.position.includes(index + 1));
-
                     return (
                       <DropField key={index + 1} id={index + 1}>
                         {ship &&
