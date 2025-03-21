@@ -136,8 +136,8 @@ const BotField = () => {
             // const pos = [];
             for (let j = 0; j < ships[i].position.length; j++) {
               console.log(ships[i].position.length);
-              const line = Math.floor((index - 1) / 10);
-              const column = (index - 1) % 10;
+              const line = Math.floor((ships[i].position[j] - 1) / 10);
+              const column = (ships[i].position[j] - 1) % 10;
 
               for (let k = -1; k < 2; k++) {
                 for (let h = -1; h < 2; h++) {
@@ -147,7 +147,7 @@ const BotField = () => {
                     continue;
                   }
 
-                  // console.log(newLine * 10 + newColumn + 1);
+                  console.log(ships[i].position[j], newLine, newColumn);
                   pos.push(newLine * 10 + newColumn + 1);
                 }
               }
