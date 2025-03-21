@@ -42,19 +42,25 @@ const fillPositions = (data) => {
 
   newShips = newShips.map((ship) => {
     let newPos = [];
-
-    check: while (true) {
-      let line = generateRandomNum(0, 9) * 10;
-      let column = generateRandomNum(1, 10 - ship.size + 1);
-
-      newPos = Array.from({ length: ship.size }, (_, i) => line + column + i);
+    let flag = false;
+    while (!flag) {
+      let line = generateRandomNum(0, 9);
+      let column = generateRandomNum(0, 9);
+      let orientation = generateRandomNum(0, 1);
+      let err = 0;
+      if ((orientation == 0 && (column + ship.size) > 10) || (orientation == 1 && (line + ship.size) > 10)) {
+        err = 1;
+      }
+      console.log(line, column);
+      orientation == 0 ? newPos = Array.from({ length: ship.size }, (_, i) => 10* line + column + i + 1) : 
+      newPos = Array.from({ length: ship.size }, (_, i) => 10 * line + column + 10 * i + 1);
 
       const taken_zone = new Set([...taken_pos]);
 
       taken_pos.forEach((pos) => getNeighbors(pos).forEach((n) => taken_zone.add(n)));
 
-      if (newPos.every((pos) => !taken_zone.has(pos))) {
-        break check;
+      if (newPos.every((pos) => !taken_zone.has(pos)) && err != 1) {
+        flag = true;
       }
     }
 
@@ -62,7 +68,7 @@ const fillPositions = (data) => {
 
     return { ...ship, position: newPos };
   });
-
+  console.log(newShips);
   return newShips;
 };
 

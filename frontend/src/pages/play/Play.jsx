@@ -165,7 +165,7 @@ const BotField = () => {
   return (
     <div className={css.mainContainer}>
       <Background>
-        <h2 className={css.h2text}>Расстановка кораблей</h2>
+        <h2 className={css.h2text}>Бой</h2>
         <div className={css.fieldContainer}>
           <div className={css.gameFieldContainer}>
             <div className={css.gameFielContent}>
