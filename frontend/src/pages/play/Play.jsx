@@ -3,13 +3,17 @@ import { Background } from '../../components/ui/background/Background';
 import css from './Play.module.css';
 import { Ship } from '../../components/ui/ship/Ship';
 import { DropField } from '../../components/ui/dropField/dropField';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { Button } from '../../components/ui/button/button';
+import { useNavigate } from 'react-router-dom';
 
 const getRandomInt = (max) => {
   return Math.floor(Math.random() * max);
 };
 
 const BotField = () => {
+  const nav = useNavigate();
+
   const [ships, SetShips] = useState([
     { id: 41, size: 4, position: [] },
     { id: 31, size: 3, position: [] },
@@ -85,12 +89,10 @@ const BotField = () => {
           if (orientation == 0) {
             for (let j = col; j < col + Math.floor(ships_length[i] / 10); j++) {
               field[row][j] = ships_length[i];
-              SetShips(ships[i].position.push(10*row + j + 1));
             }
           } else {
             for (let j = row; j < row + Math.floor(ships_length[i] / 10); j++) {
               field[j][col] = ships_length[i];
-              SetShips(ships[i].position.push(10*j + col + 1));
             }
           }
         }
@@ -99,44 +101,66 @@ const BotField = () => {
     return field.flat();
   }, []);
 
+  useEffect(() => {
+    const n = ships.map((s) => {
+      const pos = [];
+      flatField.forEach((ss, i) => {
+        if (ss === s.id) {
+          pos.push(i + 1);
+        }
+      });
+      return { ...s, position: pos };
+    });
+    SetShips(n);
+  }, [flatField]);
+
   const { data } = useData();
   const [hit, setHit] = useState([]);
+
+  // console.log(ships);
 
   const handleCellClick = (index) => {
     if (hit.includes(index)) {
       return;
     }
+
+    const pos = [];
     if (flatField[index - 1] != 0) {
       for (let i = 0; i < ships.length; i++) {
+        // console.log(ships[i].size);
         if (ships[i].id == flatField[index - 1]) {
-          if (ships[i].size != 0) {
-            SetShips(ships[i].size--);
-          }
-          else {
+          // console.log(ships[i].size);
+          if (ships[i].size > 1) {
+            SetShips((ship) => ship.map((s, ind) => (i === ind ? { ...s, size: s.size - 1 } : s)));
+          } else {
+            // const pos = [];
             for (let j = 0; j < ships[i].position.length; j++) {
+              console.log(ships[i].position.length);
               const line = Math.floor((index - 1) / 10);
               const column = (index - 1) % 10;
+
               for (let k = -1; k < 2; k++) {
                 for (let h = -1; h < 2; h++) {
                   const newLine = k + line;
                   const newColumn = h + column;
-
                   if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
                     continue;
                   }
 
-                  setHit([...hit, newLine * 10 + newColumn + 1]);
+                  // console.log(newLine * 10 + newColumn + 1);
+                  pos.push(newLine * 10 + newColumn + 1);
                 }
               }
+              console.log(pos);
             }
+            // setHit((hit) => [...hit, ...pos]);
+            console.log(hit);
           }
         }
       }
     }
-    setHit([...hit, index]);
+    setHit((hit) => [...hit, ...pos, index]);
   };
-
-  console.log(ships);
 
   return (
     <div className={css.mainContainer}>
@@ -170,15 +194,28 @@ const BotField = () => {
                       id > 0 && findHit
                         ? css.TEMP_KLETKA_EST
                         : findHit
-                          ? css.TEMP_KLETKA_NET
-                          : css.TEMP_KLETKA
+                        ? css.TEMP_KLETKA_NET
+                        : css.TEMP_KLETKA
                     }
                     onClick={() => handleCellClick(index + 1)}
-                  >{index + 1}</div>
+                  >
+                    {index + 1}
+                  </div>
                 );
               })}
             </div>
           </div>
+        </div>
+        <div className={css.buttons}>
+          <Button
+            onClick={() => {
+              nav('/');
+            }}
+            status={true}
+            size={'medium'}
+          >
+            Выйти в меню
+          </Button>
         </div>
       </Background>
     </div>

@@ -3,7 +3,7 @@ import { Button } from '../../components/ui/button/button';
 import { useNavigate } from 'react-router-dom';
 import { Ship } from '../../components/ui/ship/Ship';
 import { DndContext } from '@dnd-kit/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DropField } from '../../components/ui/dropField/dropField';
 import { useData } from '../../store/game';
 import { Background } from '../../components/ui/background/Background';
@@ -71,6 +71,14 @@ const Bots = () => {
   const { data, setData, updateShipPosition } = useData();
   const [dragCurrShip, setDragCurrShip] = useState(null);
   const [activeHint, setActiveHint] = useState(false);
+
+  const [goPlay, setGoPlay] = useState(false);
+
+  useEffect(() => {
+    if (data.every((dt) => dt.position.length !== 0)) {
+      setGoPlay(true);
+    }
+  }, [data]);
 
   const handleDragStart = ({ active }) => {
     const ship = data.find((s) => s.id === active.id);
@@ -199,7 +207,7 @@ const Bots = () => {
             Случайным образом
           </Button>
           <div className={css.buttons}>
-            <Button status={true} size={'medium'} onClick={() => nav('/play')}>
+            <Button status={goPlay} size={'medium'} onClick={() => (goPlay ? nav('/play') : null)}>
               Играть
             </Button>
             <Button status={true} size={'medium'} onClick={() => nav('/')}>
