@@ -2,16 +2,16 @@ import { create } from 'zustand';
 
 export const useData = create((set) => ({
   data: [
-    { id: 'ship1', size: 4, position: [] },
-    { id: 'ship2', size: 3, position: [] },
-    { id: 'ship3', size: 3, position: [] },
-    { id: 'ship4', size: 2, position: [] },
-    { id: 'ship5', size: 2, position: [] },
-    { id: 'ship6', size: 2, position: [] },
-    { id: 'ship7', size: 1, position: [] },
-    { id: 'ship8', size: 1, position: [] },
-    { id: 'ship9', size: 1, position: [] },
-    { id: 'ship10', size: 1, position: [] },
+    { id: 41, size: 4, position: [] },
+    { id: 31, size: 3, position: [] },
+    { id: 32, size: 3, position: [] },
+    { id: 21, size: 2, position: [] },
+    { id: 22, size: 2, position: [] },
+    { id: 23, size: 2, position: [] },
+    { id: 11, size: 1, position: [] },
+    { id: 12, size: 1, position: [] },
+    { id: 13, size: 1, position: [] },
+    { id: 14, size: 1, position: [] },
   ],
   setData: (state) => set(() => ({ data: state })),
   updateShipPosition: (shipId, newPosition) =>

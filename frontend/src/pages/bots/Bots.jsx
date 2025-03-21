@@ -51,7 +51,7 @@ const fillPositions = (data) => {
       if ((orientation == 0 && (column + ship.size) > 10) || (orientation == 1 && (line + ship.size) > 10)) {
         err = 1;
       }
-      console.log(line, column);
+      //console.log(line, column);
       orientation == 0 ? newPos = Array.from({ length: ship.size }, (_, i) => 10* line + column + i + 1) : 
       newPos = Array.from({ length: ship.size }, (_, i) => 10 * line + column + 10 * i + 1);
 
@@ -68,7 +68,7 @@ const fillPositions = (data) => {
 
     return { ...ship, position: newPos };
   });
-  console.log(newShips);
+  //console.log(newShips);
   return newShips;
 };
 
