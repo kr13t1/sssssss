@@ -10,8 +10,20 @@ const getRandomInt = (max) => {
 };
 
 const BotField = () => {
+  const [ships, SetShips] = useState([
+    { id: 41, size: 4, position: [] },
+    { id: 31, size: 3, position: [] },
+    { id: 32, size: 3, position: [] },
+    { id: 21, size: 2, position: [] },
+    { id: 22, size: 2, position: [] },
+    { id: 23, size: 2, position: [] },
+    { id: 11, size: 1, position: [] },
+    { id: 12, size: 1, position: [] },
+    { id: 13, size: 1, position: [] },
+    { id: 14, size: 1, position: [] },
+  ]);
   const flatField = useMemo(() => {
-    const ships_length = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]; //длины кораблей для расставления потом их на поле
+    const ships_length = [41, 31, 32, 21, 22, 23, 11, 12, 13, 14]; //длины кораблей для расставления потом их на поле
     let field = new Array(10); //поле, куда будут расставляться корабли
     for (let i = 0; i < field.length; i++) {
       field[i] = new Array(10);
@@ -27,7 +39,7 @@ const BotField = () => {
         let orientation = getRandomInt(2); //0 - горизонтально, 1 - вертикально
         let sum = 0; //переменная для расчета того, есть ли рядом с местом, куда хотим встать, другие корабли
         if (orientation == 0) {
-          for (let j = col - 1; j < col + ships_length[i] + 1; j++) {
+          for (let j = col - 1; j < col + Math.floor(ships_length[i] / 10) + 1; j++) {
             //здесь цикл проверки соседних клеток и клеток, куда хочу поставить
             if (j >= 0 && j < 10) {
               sum += field[row][j];
@@ -38,7 +50,7 @@ const BotField = () => {
                 sum += field[row + 1][j];
               }
             }
-            if (j != col + ships_length[i] && j > 9) {
+            if (j != col + Math.floor(ships_length[i] / 10) && j > 9) {
               sum = 1;
               break;
             }
@@ -47,7 +59,7 @@ const BotField = () => {
             }
           }
         } else {
-          for (let j = row - 1; j < row + ships_length[i] + 1; j++) {
+          for (let j = row - 1; j < row + Math.floor(ships_length[i] / 10) + 1; j++) {
             //здесь цикл проверки соседних клеток и клеток, куда хочу поставить
             if (j >= 0 && j < 10) {
               sum += field[j][col];
@@ -58,7 +70,7 @@ const BotField = () => {
                 sum += field[j][col + 1];
               }
             }
-            if (j != row + ships_length[i] && j > 9) {
+            if (j != row + Math.floor(ships_length[i] / 10) && j > 9) {
               sum = 1;
               break;
             }
@@ -71,12 +83,14 @@ const BotField = () => {
           //ставим корабль, если вокруг нет никого
           flag = true;
           if (orientation == 0) {
-            for (let j = col; j < col + ships_length[i]; j++) {
+            for (let j = col; j < col + Math.floor(ships_length[i] / 10); j++) {
               field[row][j] = ships_length[i];
+              SetShips(ships[i].position.push(10*row + j + 1));
             }
           } else {
-            for (let j = row; j < row + ships_length[i]; j++) {
+            for (let j = row; j < row + Math.floor(ships_length[i] / 10); j++) {
               field[j][col] = ships_length[i];
+              SetShips(ships[i].position.push(10*j + col + 1));
             }
           }
         }
@@ -92,8 +106,37 @@ const BotField = () => {
     if (hit.includes(index)) {
       return;
     }
+    if (flatField[index - 1] != 0) {
+      for (let i = 0; i < ships.length; i++) {
+        if (ships[i].id == flatField[index - 1]) {
+          if (ships[i].size != 0) {
+            SetShips(ships[i].size--);
+          }
+          else {
+            for (let j = 0; j < ships[i].position.length; j++) {
+              const line = Math.floor((index - 1) / 10);
+              const column = (index - 1) % 10;
+              for (let k = -1; k < 2; k++) {
+                for (let h = -1; h < 2; h++) {
+                  const newLine = k + line;
+                  const newColumn = h + column;
+
+                  if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
+                    continue;
+                  }
+
+                  setHit([...hit, newLine * 10 + newColumn + 1]);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     setHit([...hit, index]);
   };
+
+  console.log(ships);
 
   return (
     <div className={css.mainContainer}>
@@ -127,11 +170,11 @@ const BotField = () => {
                       id > 0 && findHit
                         ? css.TEMP_KLETKA_EST
                         : findHit
-                        ? css.TEMP_KLETKA_NET
-                        : css.TEMP_KLETKA
+                          ? css.TEMP_KLETKA_NET
+                          : css.TEMP_KLETKA
                     }
                     onClick={() => handleCellClick(index + 1)}
-                  ></div>
+                  >{index + 1}</div>
                 );
               })}
             </div>
