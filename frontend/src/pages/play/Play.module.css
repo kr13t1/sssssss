@@ -74,5 +74,41 @@
   cursor: no-drop;
 }
 
+.H_TEMP_KLETKA {
+  width: 33px;
+  height: 33px;
+}
+
+.H_TEMP_KLETKA_EST {
+  width: 33px;
+  height: 33px;
+
+  background-color: red;
+}
+
+.H_TEMP_KLETKA_KORABL {
+  width: 33px;
+  height: 33px;
+
+  background-color: VAR(--purple-blue);
+}
+
+.H_TEMP_KLEKTA_NET {
+  width: 33px;
+  height: 33px;
+
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
 .buttons {
+}
+
+.SHIP {
+  height: 35px;
+
+  background-color: VAR(--purple-blue);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

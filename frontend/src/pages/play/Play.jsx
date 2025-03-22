@@ -12,20 +12,17 @@ const getRandomInt = (max) => {
 };
 
 let start = getRandomInt(4);
-let player = "human";
 
-const fourdeckSteps = () => {
+let fourdeckSteps = () => {
   let temp = start;
-  poses = [];
+  let poses = [];
   poses.push(temp);
-  while (temp < 101) {
-    if (temp + 4 > (Math.floor(temp / 10) + 1)*10) {
+  while (temp < 95) {
+    if (temp + 4 > (Math.floor(temp / 10) + 1) * 10 - 1) {
       temp += 5;
-    }
-    else if (temp + 4 == (Math.floor(temp / 10) + 1)*10) {
+    } else if (temp + 4 == (Math.floor(temp / 10) + 1) * 10 - 1) {
       temp += 1;
-    }
-    else {
+    } else {
       temp += 4;
     }
     poses.push(temp);
@@ -35,6 +32,9 @@ const fourdeckSteps = () => {
 
 const BotField = () => {
   const nav = useNavigate();
+
+  let player = "human";
+  console.log(player);
 
   const [ships, SetShips] = useState([
     { id: 41, size: 4, position: [] },
@@ -154,7 +154,9 @@ const BotField = () => {
           if (ships[i].id == pcFlatField[index - 1]) {
             // console.log(ships[i].size);
             if (ships[i].size > 1) {
-              SetShips((ship) => ship.map((s, ind) => (i === ind ? { ...s, size: s.size - 1 } : s)));
+              SetShips((ship) =>
+                ship.map((s, ind) => (i === ind ? { ...s, size: s.size - 1 } : s)),
+              );
             } else {
               // const pos = [];
               for (let j = 0; j < ships[i].position.length; j++) {
@@ -182,65 +184,136 @@ const BotField = () => {
           }
         }
       }
+      else {
+        player = "pc";
+        console.log(player);
+      }
       setHit((hit) => [...hit, ...pos, index]);
-      player = "pc";
     }
   };
 
-  let human_field = Array(100);
-  for (let i = 0; i < 100; i++) {
-    human_field[i] = 0;
-  }
-  console.log(data);
-  data.forEach((num) => {
-    num.position.forEach((pos) => {
-      human_field[pos - 1] = num.id;
-    })
+  // let human_field = Array(100);
+
+  // const [human_field, setHumanField] = useState(() => Array(100).fill(0));
+
+  // for (let i = 0; i < 100; i++) {
+  //   setHumanField((f) => {
+  //     const nf = [...f];
+  //     nf[i] = 0;
+  //     return nf;
+  //   });
+  // }
+  // console.log(data);
+
+  // const human_field = useMemo(() => {
+  //   const f = Array(100).fill(0);
+  //   data.forEach((num) => {
+  //     num.position.forEach((pos) => {
+  //       f[pos - 1] = num.id;
+  //     });
+  //   });
+  //   return f;
+  // }, [data]);
+
+  const [human_field, setHumanField] = useState(() => {
+    const f = Array(100).fill(0);
+    data.forEach((num) => {
+      num.position.forEach((pos) => {
+        f[pos - 1] = num.id;
+      });
+    });
+    return f;
   });
+
+  // data.forEach((num) => {
+  //   num.position.forEach((pos) => {
+  //     setHumanField((f) => {
+  //       const nf = [...f];
+  //       nf[pos - 1] = num.id;
+  //       return nf;
+  //     });
+  //     // human_field[pos - 1] = num.id;
+  //   });
+  // });
   console.log(human_field);
-  
-  const [pc_shoots, setShoot] = useState([])
-  let not_killed = [];
+
+  let fourdeckPos = fourdeckSteps();
+
+  const [pc_shoots, setShoot] = useState([]);
+  const [not_killed, setKill] = useState([]);
+
   const BotStep = () => {
+    console.log(player);
     if (player == 'pc') {
+    console.log("Im pc");
       let next_shoot;
+      console.log(not_killed);
       if (not_killed.length != 0) {
+        console.log("I have to kill");
         if (not_killed.length == 1) {
           let variants = [-10, -1, 1, 10];
-            next_shoot = variants[getRandomInt(4)];
-            while (((not_killed[0] + next_shoot) < 0) || ((not_killed[0] + next_shoot) > 100) || (pc_shoots.includes(next_shoot))) {
-              next_shoot = variants[getRandomInt(4)];
-            }
+          let ind = getRandomInt(4);
+          next_shoot = not_killed[0] + variants[ind];
+          while (
+            next_shoot < 0 ||
+            next_shoot > 100 ||
+            pc_shoots.includes(next_shoot)
+          ) {
+            ind = (ind + 1) % 4;
+            next_shoot = not_killed[0] + variants[ind];
+          }
+        } else {
+          let mx_el = not_killed[not_killed.indexOf(Math.max(...not_killed))];
+          let mn_el = not_killed[not_killed.indexOf(Math.min(...not_killed))]
+          let ind = getRandomInt(2);
+          mx_el - mn_el < 10
+            ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
+            : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
+          if (pc_shoots.includes(next_shoot)) {
+            ind = (ind + 1) % 2;
+            mx_el - mn_el < 10
+            ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
+            : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
+          }
+          console.log(mn_el, mx_el, ind, next_shoot);
         }
-        else {
-          (not_killed[not_killed.length-1]-not_killed[0]) == 1 ? next_shoot = [not_killed[0]-1, not_killed[not_killed.length-1]+1][getRandomInt(2)] : 
-          next_shoot = [not_killed[0]-10, not_killed[not_killed.length-1]+10][getRandomInt(2)]; 
+      } else {
+        console.log("I didnt hit anything");
+        if (human_field.find((numb) => numb == 41)) {
+          let ind = getRandomInt(fourdeckPos.length);
+          next_shoot = fourdeckPos[ind];
+          while (pc_shoots.includes(next_shoot)) {
+            ind = (ind + getRandomInt(fourdeckPos.length)) % fourdeckPos.length;
+            next_shoot = fourdeckPos[ind];
+          }
+          if (next_shoot == undefined) {
+            console.log(ind, fourdeckPos[ind]);
+          }
+        }
+      }
+      console.log(next_shoot);
+      if (human_field[next_shoot] != 0) {
+        console.log("I hit");
+        console.log(not_killed.length, Math.floor(human_field[next_shoot] / 10));
+        setKill((kill) => [...not_killed, next_shoot]);
+        // human_field[next_shoot] = -1;
+        console.log(not_killed.length, Math.floor(human_field[next_shoot] / 10));
+        if (not_killed.length + 1 == Math.floor(human_field[next_shoot] / 10)) {
+          console.log("I clear array");
+            // human_field[not_killed[not_killed.length - 1]] = -2;
+          setKill([]);
         }
       }
       else {
-        if (human_field.find((numb) => numb == 41)) {
-          next_shoot = fourdeckSteps[getRandomInt(fourdeckSteps.length)];
-          while (pc_shoots.includes(next_shoot)) {
-            next_shoot = fourdeckSteps[getRandomInt(fourdeckSteps.length)];
-          }
-        }
+        player = "human";
       }
-      if (human_field[next_shoot] != 0) {
-        not_killed.push(next_shoot);
-        human_field[next_shoot] == -1;
-        if (not_killed.length == Math.floor(human_field[next_shoot]) / 10) {
-          while (not_killed.length != 0) {
-            human_field[not_killed[not_killed.length - 1]] = -2;
-            not_killed.pop();
-          }
-        }
-      }
-      setShoot((shoot) => [...pc_shoots, next_shoot]);
+      setShoot((shoot) => [...shoot, next_shoot]);
       console.log(pc_shoots);
       console.log(not_killed);
-      player = "human";
     }
   };
+
+  // console.log(player);
 
   return (
     <div className={css.mainContainer}>
@@ -249,7 +322,7 @@ const BotField = () => {
         <div className={css.fieldContainer}>
           <div className={css.gameFieldContainer}>
             <div className={css.gameFielContent}>
-              {Array.from({ length: 100 }, (_, index) => {
+              {/* {Array.from({ length: 100 }, (_, index) => {
                 const ship = data.find((s) => s.position.includes(index + 1));
                 return (
                   <DropField key={index + 1} id={index + 1}>
@@ -258,6 +331,24 @@ const BotField = () => {
                         cell === index + 1 ? <Ship key={i} id={ship.id} size={ship.size} /> : null,
                       )}
                   </DropField>
+                );
+              })} */}
+              {human_field.map((id, index) => {
+                const findshoot = pc_shoots.includes(index);
+                return (
+                  <div
+                    key={index}
+                    className={
+                      id > 0 && findshoot
+                        ? css.TEMP_KLETKA_EST
+                        : findshoot
+                        ? css.TEMP_KLETKA_NET
+                        : id > 0
+                        ? css.SHIP
+                        : css.TEMP_KLETKA
+                    }
+                  >
+                  </div>
                 );
               })}
             </div>
@@ -277,22 +368,11 @@ const BotField = () => {
                         ? css.TEMP_KLETKA_NET
                         : css.TEMP_KLETKA
                     }
-                    onClick={() => {handleCellClick(index + 1);
-                      {human_field.map((id, index) => {
-                        const findshoot = pc_shoots.includes(index + 1);
-                        return (
-                          <div
-                            key={index + 1}
-                            className={
-                              id > 0 && findshoot
-                                ? css.TEMP_KLETKA_EST
-                                : findshoot
-                                ? css.TEMP_KLETKA_NET
-                                : css.TEMP_KLETKA
-                            } BotStep ></div>)
-                      })
-                    }}                  }>
-                  </div>
+                    onClick={() => {
+                      handleCellClick(index + 1);
+                      BotStep();
+                    }}
+                  ></div>
                 );
               })}
             </div>
