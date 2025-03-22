@@ -11,17 +11,18 @@ const getRandomInt = (max) => {
   return Math.floor(Math.random() * max);
 };
 
-let start = getRandomInt(4);
+let start = getRandomInt(4) + 1;
+let player = "human";
 
 let fourdeckSteps = () => {
   let temp = start;
   let poses = [];
   poses.push(temp);
-  while (temp < 95) {
-    if (temp + 4 > (Math.floor(temp / 10) + 1) * 10 - 1) {
-      temp += 5;
-    } else if (temp + 4 == (Math.floor(temp / 10) + 1) * 10 - 1) {
+  while (temp < 97) {
+    if (temp == (Math.floor(temp / 10) + 1) * 10 - 1) {
       temp += 1;
+    } else if (temp + 4 > (Math.floor(temp / 10) + 1) * 10 - 1) {
+      temp += 5;
     } else {
       temp += 4;
     }
@@ -32,9 +33,6 @@ let fourdeckSteps = () => {
 
 const BotField = () => {
   const nav = useNavigate();
-
-  let player = "human";
-  console.log(player);
 
   const [ships, SetShips] = useState([
     { id: 41, size: 4, position: [] },
@@ -251,14 +249,14 @@ const BotField = () => {
       if (not_killed.length != 0) {
         console.log("I have to kill");
         if (not_killed.length == 1) {
-          let variants = [-10, -1, 1, 10];
+          let variants = [];
+          if ((not_killed[0] - 10) > 0) {variants.push(-10);}
+          if ((not_killed[0] - 1) % 10 != 9) {variants.push(-1);}
+          if ((not_killed[0] + 1) % 10 != 0) {variants.push(1);}
+          if ((not_killed[0] + 10) < 100) {variants.push(10);}
           let ind = getRandomInt(4);
           next_shoot = not_killed[0] + variants[ind];
-          while (
-            next_shoot < 0 ||
-            next_shoot > 100 ||
-            pc_shoots.includes(next_shoot)
-          ) {
+          while (pc_shoots.includes(next_shoot - 1)) {
             ind = (ind + 1) % 4;
             next_shoot = not_killed[0] + variants[ind];
           }
@@ -269,51 +267,93 @@ const BotField = () => {
           mx_el - mn_el < 10
             ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
             : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
-          if (pc_shoots.includes(next_shoot)) {
+          if (pc_shoots.includes(next_shoot - 1)) {
             ind = (ind + 1) % 2;
             mx_el - mn_el < 10
             ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
             : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
           }
-          console.log(mn_el, mx_el, ind, next_shoot);
+          console.log(mn_el, mx_el, ind, next_shoot - 1);
         }
       } else {
         console.log("I didnt hit anything");
         if (human_field.find((numb) => numb == 41)) {
+          console.log(fourdeckPos);
           let ind = getRandomInt(fourdeckPos.length);
           next_shoot = fourdeckPos[ind];
-          while (pc_shoots.includes(next_shoot)) {
+          while (pc_shoots.includes(next_shoot - 1)) {
             ind = (ind + getRandomInt(fourdeckPos.length)) % fourdeckPos.length;
             next_shoot = fourdeckPos[ind];
           }
           if (next_shoot == undefined) {
-            console.log(ind, fourdeckPos[ind]);
+            console.log("undefined", ind, fourdeckPos[ind]);
           }
         }
       }
-      console.log(next_shoot);
-      if (human_field[next_shoot] != 0) {
+      console.log(next_shoot - 1);
+      const pos = [];
+      if (human_field[next_shoot - 1] != 0) {
         console.log("I hit");
-        console.log(not_killed.length, Math.floor(human_field[next_shoot] / 10));
-        setKill((kill) => [...not_killed, next_shoot]);
+        setKill((kill) => [...not_killed, next_shoot - 1]);
         // human_field[next_shoot] = -1;
-        console.log(not_killed.length, Math.floor(human_field[next_shoot] / 10));
-        if (not_killed.length + 1 == Math.floor(human_field[next_shoot] / 10)) {
+        if (not_killed.length + 1 == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log("I clear array");
-            // human_field[not_killed[not_killed.length - 1]] = -2;
+          for (let i = 0; i < not_killed.length; i++) {
+            const line = Math.floor((not_killed[i]) / 10);
+            const column = (not_killed[i]) % 10;
+            setHumanField((s) => {
+              const f = [...s];
+              f[not_killed[i]] = Math.floor((not_killed[i]) / 10);
+              return f;
+            });
+            for (let k = -1; k < 2; k++) {
+              for (let h = -1; h < 2; h++) {
+                const newLine = k + line;
+                const newColumn = h + column;
+                console.log(not_killed, newLine, newColumn);
+                if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
+                  continue;
+                }
+
+                pos.push(newLine * 10 + newColumn + 1);
+              }
+            }
+          }
+          const line = Math.floor((next_shoot - 1) / 10);
+          const column = (next_shoot - 1) % 10;
+          for (let k = -1; k < 2; k++) {
+            for (let h = -1; h < 2; h++) {
+              const newLine = k + line;
+              const newColumn = h + column;
+              if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
+                continue;
+              }
+              pos.push(newLine * 10 + newColumn + 1);
+            }
+          }
+          setHumanField((s) => {
+            const f = [...s];
+            f[next_shoot - 1] = Math.floor((not_killed[i] - 1) / 10);
+            return f;
+          });
+          console.log(pos);
           setKill([]);
         }
+        BotStep();
       }
       else {
         player = "human";
       }
-      setShoot((shoot) => [...shoot, next_shoot]);
+      console.log(pos);
+      setShoot((shoot) => [...shoot, ...pos, next_shoot - 1]);
       console.log(pc_shoots);
       console.log(not_killed);
+      console.log(player);
     }
   };
 
-  // console.log(player);
+  console.log(pc_shoots);
+  console.log(player);
 
   return (
     <div className={css.mainContainer}>
@@ -334,10 +374,10 @@ const BotField = () => {
                 );
               })} */}
               {human_field.map((id, index) => {
-                const findshoot = pc_shoots.includes(index);
+                const findshoot = pc_shoots.includes(index + 1);
                 return (
                   <div
-                    key={index}
+                    key={index + 1}
                     className={
                       id > 0 && findshoot
                         ? css.TEMP_KLETKA_EST
