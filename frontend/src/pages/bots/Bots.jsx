@@ -8,69 +8,8 @@ import { DropField } from '../../components/ui/dropField/dropField';
 import { useData } from '../../store/game';
 import { Background } from '../../components/ui/background/Background';
 import { HintModal } from '../../components/ui/hintModal/HintModal';
-
-const generateRandomNum = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const getNeighbors = (cell) => {
-  const line = Math.floor((cell - 1) / 10);
-  const column = (cell - 1) % 10;
-
-  const neighbors = [];
-
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      const newLine = i + line;
-      const newColumn = j + column;
-
-      if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
-        continue;
-      }
-
-      neighbors.push(newLine * 10 + newColumn + 1);
-    }
-  }
-
-  return neighbors;
-};
-
-const fillPositions = (data) => {
-  let newShips = data.map((ship) => ({ ...ship, position: [] }));
-
-  const taken_pos = new Set();
-
-  newShips = newShips.map((ship) => {
-    let newPos = [];
-    let flag = false;
-    while (!flag) {
-      let line = generateRandomNum(0, 9);
-      let column = generateRandomNum(0, 9);
-      let orientation = generateRandomNum(0, 1);
-      let err = 0;
-      if ((orientation == 0 && (column + ship.size) > 10) || (orientation == 1 && (line + ship.size) > 10)) {
-        err = 1;
-      }
-      //console.log(line, column);
-      orientation == 0 ? newPos = Array.from({ length: ship.size }, (_, i) => 10* line + column + i + 1) : 
-      newPos = Array.from({ length: ship.size }, (_, i) => 10 * line + column + 10 * i + 1);
-
-      const taken_zone = new Set([...taken_pos]);
-
-      taken_pos.forEach((pos) => getNeighbors(pos).forEach((n) => taken_zone.add(n)));
-
-      if (newPos.every((pos) => !taken_zone.has(pos)) && err != 1) {
-        flag = true;
-      }
-    }
-
-    newPos.forEach((pos) => taken_pos.add(pos));
-
-    return { ...ship, position: newPos };
-  });
-  //console.log(newShips);
-  return newShips;
-};
+import { getNeighbors } from '../../store/utils/getNeighbors';
+import { getRandomPos } from '../../store/utils/getRandomPos';
 
 const Bots = () => {
   const nav = useNavigate();
@@ -207,7 +146,7 @@ const Bots = () => {
             status={true}
             size={'small'}
             onClick={() => {
-              setData(fillPositions(data));
+              setData(getRandomPos(data));
             }}
           >
             Случайным образом
