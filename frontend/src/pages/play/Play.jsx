@@ -31,6 +31,38 @@ let fourdeckSteps = () => {
   return poses;
 };
 
+
+let tripledeckSteps = (taken_pos) => {
+  let temp = start;
+  let poses = [];
+  while (temp < 95) {
+    if (temp == (Math.floor(temp / 10) + 1) * 10) {
+      temp += 1;
+    } else if (temp + 4 > (Math.floor(temp / 10) + 1) * 10) {
+      temp += 3;
+    } else {
+      temp += 2;
+    }
+    if (!taken_pos.includes(temp)) {
+      poses.push(temp);
+    }
+  }
+  return poses;
+}
+
+let restSteps = (taken_pos) => {
+  let temp = start;
+  let poses = [];
+  while (temp < 99) {
+    temp += 1;
+    if (!taken_pos.includes(temp)) {
+      poses.push(temp);
+    }
+  }
+  return poses;
+}
+
+
 const BotField = () => {
   const nav = useNavigate();
 
@@ -236,27 +268,30 @@ const BotField = () => {
   console.log(human_field);
 
   let fourdeckPos = fourdeckSteps();
+  let tripledeckPos;
+  let flag_fourdeck = 1;
+
 
   const [pc_shoots, setShoot] = useState([]);
   const [not_killed, setKill] = useState([]);
 
   const BotStep = () => {
     if (player == 'pc') {
-    console.log("Im pc");
+      console.log("Im pc");
       let next_shoot;
       console.log(not_killed);
       if (not_killed.length != 0) {
         console.log("I have to kill");
         if (not_killed.length == 1) {
           let variants = [];
-          if ((not_killed[0] - 10) > 0) {variants.push(-10);}
-          if ((not_killed[0] - 1) % 10 != 9) {variants.push(-1);}
-          if ((not_killed[0] + 1) % 10 != 0) {variants.push(1);}
-          if ((not_killed[0] + 10) < 100) {variants.push(10);}
-          let ind = getRandomInt(4);
+          if ((not_killed[0] - 10) > 0 && (not_killed[0] - 10 < 100)) { variants.push(-10); }
+          if ((not_killed[0] - 1) % 10 != 0 && ((not_killed[0] - 1 > 0) && (not_killed[0] - 1 < 100))) { variants.push(-1); }
+          if ((not_killed[0] + 1) % 10 != 1 && ((not_killed[0] + 1 > 0) && (not_killed[0] + 1 < 100))) { variants.push(1); }
+          if ((not_killed[0] + 10) < 100 && (not_killed[0] + 10 > 0)) { variants.push(10); }
+          let ind = getRandomInt(variants.length);
           next_shoot = not_killed[0] + variants[ind];
           while (pc_shoots.includes(next_shoot)) {
-            ind = (ind + 1) % 4;
+            ind = (ind + 1) % variants.length;
             next_shoot = not_killed[0] + variants[ind];
           }
         } else {
@@ -269,13 +304,27 @@ const BotField = () => {
           if (pc_shoots.includes(next_shoot)) {
             ind = (ind + 1) % 2;
             mx_el - mn_el < 10
-            ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
-            : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
+              ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
+              : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
           }
           console.log(mn_el, mx_el, ind, next_shoot);
         }
       } else {
         console.log("I didnt hit anything");
+        if (!human_field.find((numb) => numb == 41)) {
+          if (flag_fourdeck == 1) {
+            flag_fourdeck = 0;
+            tripledeckPos = tripledeckSteps(pc_shoots);
+          }
+          if ((!human_field.find((numb) => numb == 31)) && (!human_field.find((numb) => numb == 32))) {
+            if (flag_tripledeck == 1) {
+              flag_tripledeck = 0;
+              restPos = restSteps(pc_shoots);
+            }
+          }
+        }
+
+
         if (human_field.find((numb) => numb == 41)) {
           console.log(fourdeckPos);
           let ind = getRandomInt(fourdeckPos.length);
@@ -285,23 +334,56 @@ const BotField = () => {
             next_shoot = fourdeckPos[ind];
           }
         }
+        else if ((human_field.find((numb) => numb == 31)) || (human_field.find((numb) => numb == 32))) {
+          let ind = getRandomInt(tripledeckPos.length);
+          next_shoot = tripledeckPos[ind];
+          while (pc_shoots.includes(next_shoot)) {
+            ind = (ind + getRandomInt(tripledeckPos.length)) % tripledeckPos.length;
+            next_shoot = tripledeckPos[ind];
+          }
+        }
+        else {
+          let ind = getRandomInt(restPos.length);
+          next_shoot = restPos[ind];
+          while (pc_shoots.includes(next_shoot)) {
+            ind = (ind + getRandomInt(restPos.length)) % restPos.length;
+            next_shoot = restPos[ind];
+          }
+        }
       }
       console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
         console.log("I hit");
+        console.log('Размер до у not_killed')
+        console.log(not_killed.length)
         setKill((kill) => [...kill, next_shoot]);
         console.log("not_killed", not_killed, next_shoot);
+        console.log(`not_killed array ${not_killed}`)
+        const f = [...not_killed, next_shoot];
+        console.log(`f array ${f}`)
         // human_field[next_shoot] = -1;
-        if (not_killed.length + 1 == Math.floor(human_field[next_shoot - 1] / 10)) {
+        console.log('Размер после у f')
+        console.log(f.length)
+        console.log('Размер у not_killed')
+        console.log(not_killed.length)
+        if (f.length == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log("I clear array");
-          for (let i = 0; i < not_killed.length; i++) {
-            const line = Math.floor((not_killed[i] - 1) / 10);
-            const column = (not_killed[i] - 1) % 10;
-            setHumanField((s) => {
-              const f = [...s];
-              f[not_killed[i] - 1] = Math.floor((not_killed[i] - 1) / 10);
-              return f;
+          console.log(`f array clear ${f}`)
+          for (let i = 0; i < f.length; i++) {
+            let line = Math.floor((f[i] - 1) / 10);
+            let column = (f[i] - 1) % 10;
+            console.log(`line ${line}, not_killed ${not_killed[i]}`);
+            console.log(`column ${column}, f ${f[i]}`);
+            setHumanField((ss) => {
+              const s = [...ss];
+              console.log(`f[f[i] - 1] f ${not_killed}`);
+              s[f[i] - 1] = Math.floor((human_field[f[i] - 1]) / 10);
+              console.warn(`f[f[i] -1] ${f[i] - 1}`)
+              console.warn(`f[f[i] -1] human field ${human_field[f[i] - 1]}`)
+              console.warn(`f[f[i] -1] math floor ${Math.floor((human_field[f[i] - 1]) / 10)}`)
+              console.warn(`f[f[i] -1] ${s[f[i] - 1]}`)
+              return s;
             });
             for (let k = -1; k < 2; k++) {
               for (let h = -1; h < 2; h++) {
@@ -330,10 +412,10 @@ const BotField = () => {
           }
           setHumanField((s) => {
             const f = [...s];
-            f[next_shoot - 1] = Math.floor((next_shoot - 1) / 10);
+            f[next_shoot - 1] = Math.floor((human_field[next_shoot - 1]) / 10);
             return f;
           });
-          console.log(pos);
+          console.log(`позиция ${pos}`);
           setKill([]);
         }
       }
@@ -341,7 +423,9 @@ const BotField = () => {
         player = "human";
       }
       console.log(pos);
+      console.log(typeof next_shoot)
       setShoot((shoot) => [...shoot, ...pos, next_shoot]);
+      console.log(`human ${human_field}`)
       console.log(pc_shoots);
       console.log(not_killed);
       console.log(player);
@@ -351,10 +435,12 @@ const BotField = () => {
   console.log(pc_shoots);
   console.log(player);
 
+  useEffect(() => { }, [player])
+
   return (
     <div className={css.mainContainer}>
       <Background>
-        <h2 className={css.h2text}>Бой</h2>
+        <h2 className={css.h2text}>Сейчас ходит: {player !== 'pc' ? "игрок" : "бот"}</h2>
         <div className={css.fieldContainer}>
           <div className={css.gameFieldContainer}>
             <div className={css.gameFielContent}>
@@ -378,10 +464,10 @@ const BotField = () => {
                       id > 0 && findshoot
                         ? css.TEMP_KLETKA_EST
                         : findshoot
-                        ? css.TEMP_KLETKA_NET
-                        : id > 0
-                        ? css.SHIP
-                        : css.TEMP_KLETKA
+                          ? css.TEMP_KLETKA_NET
+                          : id > 0
+                            ? css.SHIP
+                            : css.TEMP_KLETKA
                     }
                   >
                   </div>
@@ -401,8 +487,8 @@ const BotField = () => {
                       id > 0 && findHit
                         ? css.TEMP_KLETKA_EST
                         : findHit
-                        ? css.TEMP_KLETKA_NET
-                        : css.TEMP_KLETKA
+                          ? css.TEMP_KLETKA_NET
+                          : css.TEMP_KLETKA
                     }
                     onClick={() => {
                       handleCellClick(index + 1);
