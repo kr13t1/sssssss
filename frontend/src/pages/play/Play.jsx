@@ -241,7 +241,6 @@ const BotField = () => {
   const [not_killed, setKill] = useState([]);
 
   const BotStep = () => {
-    console.log(player);
     if (player == 'pc') {
     console.log("Im pc");
       let next_shoot;
@@ -291,7 +290,8 @@ const BotField = () => {
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
         console.log("I hit");
-        setKill((kill) => [...not_killed, next_shoot]);
+        setKill((kill) => [...kill, next_shoot]);
+        console.log("not_killed", not_killed, next_shoot);
         // human_field[next_shoot] = -1;
         if (not_killed.length + 1 == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log("I clear array");
@@ -336,7 +336,6 @@ const BotField = () => {
           console.log(pos);
           setKill([]);
         }
-        BotStep();
       }
       else {
         player = "human";
