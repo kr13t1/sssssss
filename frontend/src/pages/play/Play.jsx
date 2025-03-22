@@ -270,7 +270,8 @@ const BotField = () => {
   let fourdeckPos = fourdeckSteps();
   let tripledeckPos;
   let flag_fourdeck = 1;
-
+  let flag_tripledeck = 1;
+  let restPos;
 
   const [pc_shoots, setShoot] = useState([]);
   const [not_killed, setKill] = useState([]);
@@ -492,7 +493,8 @@ const BotField = () => {
                     }
                     onClick={() => {
                       handleCellClick(index + 1);
-                      BotStep();
+                        BotStep();
+                      
                     }}
                   ></div>
                 );
