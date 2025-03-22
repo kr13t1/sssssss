@@ -104,11 +104,7 @@
 }
 
 .SHIP {
-  height: 35px;
+  height: 33px;
 
-  background-color: VAR(--purple-blue);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: VAR(--purple-blue)
 }

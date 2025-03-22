@@ -18,10 +18,10 @@ let fourdeckSteps = () => {
   let temp = start;
   let poses = [];
   poses.push(temp);
-  while (temp < 97) {
-    if (temp == (Math.floor(temp / 10) + 1) * 10 - 1) {
+  while (temp < 95) {
+    if (temp == (Math.floor(temp / 10) + 1) * 10) {
       temp += 1;
-    } else if (temp + 4 > (Math.floor(temp / 10) + 1) * 10 - 1) {
+    } else if (temp + 4 > (Math.floor(temp / 10) + 1) * 10) {
       temp += 5;
     } else {
       temp += 4;
@@ -256,7 +256,7 @@ const BotField = () => {
           if ((not_killed[0] + 10) < 100) {variants.push(10);}
           let ind = getRandomInt(4);
           next_shoot = not_killed[0] + variants[ind];
-          while (pc_shoots.includes(next_shoot - 1)) {
+          while (pc_shoots.includes(next_shoot)) {
             ind = (ind + 1) % 4;
             next_shoot = not_killed[0] + variants[ind];
           }
@@ -267,13 +267,13 @@ const BotField = () => {
           mx_el - mn_el < 10
             ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
             : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
-          if (pc_shoots.includes(next_shoot - 1)) {
+          if (pc_shoots.includes(next_shoot)) {
             ind = (ind + 1) % 2;
             mx_el - mn_el < 10
             ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
             : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
           }
-          console.log(mn_el, mx_el, ind, next_shoot - 1);
+          console.log(mn_el, mx_el, ind, next_shoot);
         }
       } else {
         console.log("I didnt hit anything");
@@ -281,29 +281,26 @@ const BotField = () => {
           console.log(fourdeckPos);
           let ind = getRandomInt(fourdeckPos.length);
           next_shoot = fourdeckPos[ind];
-          while (pc_shoots.includes(next_shoot - 1)) {
+          while (pc_shoots.includes(next_shoot)) {
             ind = (ind + getRandomInt(fourdeckPos.length)) % fourdeckPos.length;
             next_shoot = fourdeckPos[ind];
           }
-          if (next_shoot == undefined) {
-            console.log("undefined", ind, fourdeckPos[ind]);
-          }
         }
       }
-      console.log(next_shoot - 1);
+      console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
         console.log("I hit");
-        setKill((kill) => [...not_killed, next_shoot - 1]);
+        setKill((kill) => [...not_killed, next_shoot]);
         // human_field[next_shoot] = -1;
         if (not_killed.length + 1 == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log("I clear array");
           for (let i = 0; i < not_killed.length; i++) {
-            const line = Math.floor((not_killed[i]) / 10);
-            const column = (not_killed[i]) % 10;
+            const line = Math.floor((not_killed[i] - 1) / 10);
+            const column = (not_killed[i] - 1) % 10;
             setHumanField((s) => {
               const f = [...s];
-              f[not_killed[i]] = Math.floor((not_killed[i]) / 10);
+              f[not_killed[i] - 1] = Math.floor((not_killed[i] - 1) / 10);
               return f;
             });
             for (let k = -1; k < 2; k++) {
@@ -333,7 +330,7 @@ const BotField = () => {
           }
           setHumanField((s) => {
             const f = [...s];
-            f[next_shoot - 1] = Math.floor((not_killed[i] - 1) / 10);
+            f[next_shoot - 1] = Math.floor((next_shoot - 1) / 10);
             return f;
           });
           console.log(pos);
@@ -345,7 +342,7 @@ const BotField = () => {
         player = "human";
       }
       console.log(pos);
-      setShoot((shoot) => [...shoot, ...pos, next_shoot - 1]);
+      setShoot((shoot) => [...shoot, ...pos, next_shoot]);
       console.log(pc_shoots);
       console.log(not_killed);
       console.log(player);
