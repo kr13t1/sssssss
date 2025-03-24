@@ -1,0 +1,18 @@
+.container {
+  width: 366px;
+  height: 366px;
+
+  background-image: url('../../../assets/bg_play_field.png');
+  background-repeat: no-repeat;
+}
+
+.content {
+  margin-left: 29px;
+  margin-top: 27px;
+
+  width: 328px;
+  height: 328px;
+
+  display: grid;
+  grid-template-columns: repeat(10, 33px);
+}

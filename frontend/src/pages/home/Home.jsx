@@ -1,23 +1,23 @@
 import css from './Home.module.css';
-import { Button } from '../../components/ui/button/button';
+
+import { Button } from '../../components/ui';
+
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const nav = useNavigate();
 
   return (
-    <div className={css.mainContainer}>
-      <main className={css.mainContent}>
-        <div className={css.playButtons}>
-          <Button onClick={() => nav('/bots')} status={true} size={'medium'}>
-            Играть против компьютера
-          </Button>
-          <Button status={false} size={'medium'}>
-            Играть с другом
-          </Button>
-        </div>
-      </main>
-    </div>
+    <main className={css.mainContent}>
+      <div className={css.playButtons}>
+        <Button onClick={() => nav('/settings')} status={true} size={'medium'}>
+          Играть против компьютера
+        </Button>
+        <Button onClick={() => nav('/online')} status={true} size={'medium'}>
+          Играть с другом
+        </Button>
+      </div>
+    </main>
   );
 };
 

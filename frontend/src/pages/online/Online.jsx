@@ -1,7 +1,9 @@
 import css from './Online.module.css';
 
+import { Background } from '../../components/ui';
+
 const Online = () => {
-  return <></>;
+  return <Background></Background>;
 };
 
 export default Online;

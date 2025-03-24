@@ -1,4 +1,5 @@
 import css from './HintModal.module.css';
+
 import { Button } from '../button/Button';
 
 export const HintModal = ({ status, changeStatus, title, desc }) => {

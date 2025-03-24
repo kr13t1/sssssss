@@ -1,21 +1,18 @@
-import { Route, Routes } from 'react-router-dom';
-
 import './App.css';
-
-import Layout from './pages/Layout';
-import Home from './pages/home/Home';
-import Bots from './pages/bots/Bots';
-import Play from './pages/play/Play';
-import BotField from './pages/play/Play';
+import { Route, Routes } from 'react-router-dom';
+import { Setup, Home, Layout, Online, Play, Error, Settings } from './pages';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="bots" element={<Bots />} />
-        <Route path="play" element={<BotField />} />
+        <Route path="setup" element={<Setup />} />
+        <Route path="play" element={<Play />} />
+        <Route path="online" element={<Online />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
+      <Route path="/*" element={<Error />} />
     </Routes>
   );
 }

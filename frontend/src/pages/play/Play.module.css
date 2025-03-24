@@ -17,28 +17,6 @@
   padding-left: 208px;
 }
 
-.gameFieldContainer {
-  margin-right: 107px;
-
-  width: 366px;
-  height: 366px;
-  background-image: url('../../assets/bg_play_field.png');
-  background-repeat: no-repeat;
-}
-
-.gameFielContent {
-  margin-left: 29px;
-  margin-top: 27px;
-
-  width: 328px;
-  height: 328px;
-
-  display: grid;
-  grid-template-columns: repeat(10, 33px);
-
-  /* background-color: aqua; */
-}
-
 .h2text {
   font-size: 22px;
   color: VAR(--purple-blue);
@@ -46,65 +24,5 @@
 }
 
 .TEMP_SPAN {
-  margin-left: 88px;
-}
-
-.TEMP_KLETKA {
-  width: 33px;
-  height: 33px;
-
-  cursor: pointer;
-}
-
-.TEMP_KLETKA_EST {
-  width: 33px;
-  height: 33px;
-
-  background-color: red;
-
-  cursor: no-drop;
-}
-
-.TEMP_KLETKA_NET {
-  width: 33px;
-  height: 33px;
-
-  background-color: rgba(0, 0, 0, 0.3);
-
-  cursor: no-drop;
-}
-
-.H_TEMP_KLETKA {
-  width: 33px;
-  height: 33px;
-}
-
-.H_TEMP_KLETKA_EST {
-  width: 33px;
-  height: 33px;
-
-  background-color: red;
-}
-
-.H_TEMP_KLETKA_KORABL {
-  width: 33px;
-  height: 33px;
-
-  background-color: VAR(--purple-blue);
-}
-
-.H_TEMP_KLEKTA_NET {
-  width: 33px;
-  height: 33px;
-
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.buttons {
-}
-
-.SHIP {
-  height: 33px;
-
-  background-color: VAR(--purple-blue)
+  margin-left: 195px;
 }

@@ -29,29 +29,8 @@
   padding-left: 208px;
 }
 
-.gameFieldContainer {
-  margin-right: 107px;
-
-  width: 366px;
-  height: 366px;
-  background-image: url('../../assets/bg_play_field.png');
-  background-repeat: no-repeat;
-}
-
-.gameFielContent {
-  margin-left: 29px;
-  margin-top: 27px;
-
-  width: 328px;
-  height: 328px;
-
-  display: grid;
-  grid-template-columns: repeat(10, 33px);
-
-  /* background-color: aqua; */
-}
-
 .selectContainer {
+  margin-left: 107px;
 }
 
 .buttons {

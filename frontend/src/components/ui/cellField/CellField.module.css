@@ -1,0 +1,31 @@
+.hitting {
+  width: 33px;
+  height: 33px;
+
+  background-color: red;
+
+  cursor: no-drop;
+}
+
+.noHitting {
+  width: 33px;
+  height: 33px;
+
+  background-color: VAR(--light-black);
+
+  cursor: no-drop;
+}
+
+.ship {
+  width: 33px;
+  height: 33px;
+
+  background-color: VAR(--purple-blue);
+}
+
+.cell {
+  width: 33px;
+  height: 33px;
+
+  cursor: pointer;
+}
