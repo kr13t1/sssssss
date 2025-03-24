@@ -15,9 +15,9 @@ let player = 'human';
 const findShips = (start, basic_step, step_for_next_row, taken_pos) => {
   let temp = start;
   let poses = [];
-  poses.push(temp);
   while (temp < 100 - step_for_next_row) {
-    if (temp == (Math.floor(temp / 10) + 1) * 10) {
+    // console.log(temp, Math.floor(temp / 10));
+    if (temp == (Math.floor(temp / 10)) * 10) {
       temp += 1;
     } else if (temp + basic_step > (Math.floor(temp / 10) + 1) * 10) {
       temp += step_for_next_row;
@@ -255,15 +255,29 @@ const Play = () => {
         } else {
           let mx_el = not_killed[not_killed.indexOf(Math.max(...not_killed))];
           let mn_el = not_killed[not_killed.indexOf(Math.min(...not_killed))];
-          let ind = generateRandomNum(0, 1);
-          mx_el - mn_el < 10
-            ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
-            : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
-          if (pc_shoots.includes(next_shoot) || next_shoot < 0 || next_shoot >= 100) {
+          let variants = [];
+          if (mx_el - mn_el < 10) {
+            if ((mn_el - 1) % 10 != 0 && (mn_el - 1) > 0 && (mn_el - 1 < 100)) {
+              variants.push(mn_el - 1);
+            }
+            if ((mx_el + 1) % 10 != 1 && (mx_el + 1) > 0 && (mx_el - 1 < 100)) {
+              variants.push(mx_el + 1);
+            }
+          }
+          else {
+            if ((mn_el - 10) > 0 && (mn_el - 10) < 100) {
+              variants.push(mn_el - 10);
+            }
+            if ((mx_el + 10 > 0) && (mx_el + 10 < 100)) {
+              variants.push(mx_el + 10);
+            }
+          }
+          console.log(not_killed, mx_el, mn_el, variants); 
+          let ind = generateRandomNum(0, variants.length - 1);
+          next_shoot = variants[ind];
+          if (pc_shoots.includes(next_shoot)) {
             ind = (ind + 1) % 2;
-            mx_el - mn_el < 10
-              ? (next_shoot = [mn_el - 1, mx_el + 1][ind])
-              : (next_shoot = [mn_el - 10, mx_el + 10][ind]);
+            next_shoot = variants[ind];
           }
           console.log(mn_el, mx_el, ind, next_shoot);
         }
@@ -306,8 +320,6 @@ const Play = () => {
         if (f.length == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log('I clear array');
           for (let i = 0; i < f.length; i++) {
-            let line = Math.floor((f[i] - 1) / 10);
-            let column = (f[i] - 1) % 10;
             setHumanField((ss) => {
               const s = [...ss];
               s[f[i] - 1] = Math.floor(human_field[f[i] - 1] / 10);
@@ -337,9 +349,6 @@ const Play = () => {
       // console.log(pc_shoots);
       // console.log('not_killed', not_killed);
       // console.log(player);
-    }
-    if (player == 'pc') {
-      BotStep();
     }
   };
 
