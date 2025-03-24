@@ -229,7 +229,7 @@ const Play = () => {
     if (player == 'pc') {
       console.log('Im pc');
       let next_shoot;
-      //console.log(not_killed);
+      console.log("not_killed", not_killed);
       if (not_killed.length != 0) {
         console.log('I have to kill');
         if (not_killed.length == 1) {
@@ -294,71 +294,37 @@ const Play = () => {
           next_shoot = doStep(pc_shoots, restPos);
         }
       }
+      console.log("fourdeckpos", fourdeckPos);
+      console.log("tripledeck", tripledeckPos);
+      console.log("rest", restPos);
       console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
         console.log('I hit');
-        console.log('Размер до у not_killed');
-        console.log(not_killed.length);
         setKill((kill) => [...kill, next_shoot]);
-        console.log('not_killed', not_killed, next_shoot);
-        console.log(`not_killed array ${not_killed}`);
         const f = [...not_killed, next_shoot];
-        console.log(`f array ${f}`);
-        // human_field[next_shoot] = -1;
-        console.log('Размер после у f');
-        console.log(f.length);
-        console.log('Размер у not_killed');
-        console.log(not_killed.length);
         if (f.length == Math.floor(human_field[next_shoot - 1] / 10)) {
           console.log('I clear array');
-          console.log(`f array clear ${f}`);
           for (let i = 0; i < f.length; i++) {
             let line = Math.floor((f[i] - 1) / 10);
             let column = (f[i] - 1) % 10;
-            console.log(`line ${line}, not_killed ${not_killed[i]}`);
-            console.log(`column ${column}, f ${f[i]}`);
             setHumanField((ss) => {
               const s = [...ss];
-              console.log(`f[f[i] - 1] f ${not_killed}`);
               s[f[i] - 1] = Math.floor(human_field[f[i] - 1] / 10);
-              console.warn(`f[f[i] -1] ${f[i] - 1}`);
-              console.warn(`f[f[i] -1] human field ${human_field[f[i] - 1]}`);
-              console.warn(`f[f[i] -1] math floor ${Math.floor(human_field[f[i] - 1] / 10)}`);
-              console.warn(`f[f[i] -1] ${s[f[i] - 1]}`);
               return s;
             });
-            for (let k = -1; k < 2; k++) {
-              for (let h = -1; h < 2; h++) {
-                const newLine = k + line;
-                const newColumn = h + column;
-                console.log(not_killed, newLine, newColumn);
-                if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
-                  continue;
-                }
+            let neighbors = getNeighbors(f[i]);
+            neighbors.forEach((el) => pos.push(el));
+          }
+          let neighbors = getNeighbors(next_shoot);
+          neighbors.forEach((el) => pos.push(el));
 
-                pos.push(newLine * 10 + newColumn + 1);
-              }
-            }
-          }
-          const line = Math.floor((next_shoot - 1) / 10);
-          const column = (next_shoot - 1) % 10;
-          for (let k = -1; k < 2; k++) {
-            for (let h = -1; h < 2; h++) {
-              const newLine = k + line;
-              const newColumn = h + column;
-              if (newLine < 0 || newLine >= 10 || newColumn < 0 || newColumn >= 10) {
-                continue;
-              }
-              pos.push(newLine * 10 + newColumn + 1);
-            }
-          }
           setHumanField((s) => {
             const f = [...s];
             f[next_shoot - 1] = Math.floor(human_field[next_shoot - 1] / 10);
             return f;
           });
-          console.log(`позиция ${pos}`);
+          console.log(`соседи ${pos}`);
           setKill([]);
         }
       } else {
@@ -369,15 +335,15 @@ const Play = () => {
       setShoot((shoot) => [...shoot, ...pos, next_shoot]);
       // console.log(`human ${human_field}`)
       // console.log(pc_shoots);
-      console.log('not_killed', not_killed);
+      // console.log('not_killed', not_killed);
       // console.log(player);
-      if (player == 'pc') {
-        BotStep();
-      }
+    }
+    if (player == 'pc') {
+      BotStep();
     }
   };
 
-  console.log(pc_shoots);
+  console.log("pc_shoots", pc_shoots);
   console.log(player);
 
   // useEffect(() => {}, [player]);
