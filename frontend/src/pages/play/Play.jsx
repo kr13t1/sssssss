@@ -40,24 +40,21 @@ const doStep = (taken_pos, steps_arr) => {
   return res;
 };
 
+const fillField = (data) => {
+  const f = Array(100).fill(0);
+  data.forEach((num) => {
+    num.position.forEach((pos) => {
+      f[pos - 1] = num.id;
+    });
+  });
+  return f;
+};
+
 const BotField = () => {
 
   const nav = useNavigate();
 
-  const [ships, SetShips] = useState([
-    { id: 41, size: 4, position: [] },
-    { id: 31, size: 3, position: [] },
-    { id: 32, size: 3, position: [] },
-    { id: 21, size: 2, position: [] },
-    { id: 22, size: 2, position: [] },
-    { id: 23, size: 2, position: [] },
-    { id: 11, size: 1, position: [] },
-    { id: 12, size: 1, position: [] },
-    { id: 13, size: 1, position: [] },
-    { id: 14, size: 1, position: [] },
-  ]);
-
-  const pcFlatField = useMemo(() => {
+  /*const pcFlatField = useMemo(() => {
     const ships_length = [41, 31, 32, 21, 22, 23, 11, 12, 13, 14]; //длины кораблей для расставления потом их на поле
     let computer_field = new Array(10); //поле, куда будут расставляться корабли
     for (let i = 0; i < computer_field.length; i++) {
@@ -143,8 +140,25 @@ const BotField = () => {
       return { ...s, position: pos };
     });
     SetShips(n);
-  }, [pcFlatField]);
-
+  }, [pcFlatField]);*/
+  const [ships, SetShips] = useState([
+    { id: 41, size: 4, position: [] },
+    { id: 31, size: 3, position: [] },
+    { id: 32, size: 3, position: [] },
+    { id: 21, size: 2, position: [] },
+    { id: 22, size: 2, position: [] },
+    { id: 23, size: 2, position: [] },
+    { id: 11, size: 1, position: [] },
+    { id: 12, size: 1, position: [] },
+    { id: 13, size: 1, position: [] },
+    { id: 14, size: 1, position: [] },
+  ]);
+  SetShips(getRandomPos(ships));
+  useEffect(() => { }, [ships]);
+  const pcFlatField = fillField(ships);
+  useEffect(() => { }, [pcFlatField]);
+  console.log("ships", ships);
+  console.log("pcflatfield", pcFlatField);
 
   const { data } = useData();
   const [hit, setHit] = useState([]);
@@ -347,7 +361,7 @@ const BotField = () => {
   console.log(pc_shoots);
   console.log(player);
 
-  useEffect(() => { }, [player])
+  useEffect(() => { }, [player]);
 
   return (
     <div className={css.mainContainer}>
