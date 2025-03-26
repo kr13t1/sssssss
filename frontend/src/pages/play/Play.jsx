@@ -17,7 +17,7 @@ const findShips = (start, basic_step, step_for_next_row, taken_pos, neighbors) =
   let poses = [start];
   while (temp <= 100 - basic_step) {
     // console.log(temp, Math.floor(temp / 10));
-    if (temp == (Math.floor(temp / 10)) * 10) {
+    if (temp == Math.floor(temp / 10) * 10) {
       temp += 1;
     } else if (temp + basic_step > (Math.floor(temp / 10) + 1) * 10) {
       temp += step_for_next_row;
@@ -59,6 +59,9 @@ const Play = () => {
   const { time } = useTime(); // время, которое выбрал игрок
   const { marks } = useMarks(); // флаг для показа соседних клеток, по умолчанию true
   const { diff } = useDifficulty(); // сложность бота
+
+  const [countHuman, setCountHuman] = useState(0);
+  const [countBot, setCountBot] = useState(0);
 
   /*const pcFlatField = useMemo(() => {
     const ships_length = [41, 31, 32, 21, 22, 23, 11, 12, 13, 14]; //длины кораблей для расставления потом их на поле
@@ -191,12 +194,14 @@ const Play = () => {
               SetShips((ship) =>
                 ship.map((s, ind) => (i === ind ? { ...s, size: s.size - 1 } : s)),
               );
+              setCountHuman((count) => count + 1);
             } else {
               if (marks) {
                 for (let j = 0; j < ships[i].position.length; j++) {
                   let neighbors = getNeighbors(ships[i].position[j]);
                   neighbors.forEach((el) => pos.push(el));
                 }
+                setCountHuman((count) => count + 1);
               }
             }
           }
@@ -212,7 +217,7 @@ const Play = () => {
   useEffect(() => {
     setHumanField(fillField(data));
   }, []);
-  console.log("human field", human_field);
+  console.log('human field', human_field);
 
   const [pc_shoots, setShoot] = useState([]);
   const [graycells, setGrayCells] = useState([]);
@@ -228,7 +233,7 @@ const Play = () => {
     if (player == 'pc') {
       console.log('Im pc');
       let next_shoot;
-      console.log("not_killed", not_killed);
+      console.log('not_killed', not_killed);
       if (not_killed.length != 0) {
         console.log('I have to kill');
         if (not_killed.length == 1) {
@@ -256,22 +261,21 @@ const Play = () => {
           let mn_el = not_killed[not_killed.indexOf(Math.min(...not_killed))];
           let variants = [];
           if (mx_el - mn_el < 10) {
-            if ((mn_el - 1) % 10 != 0 && (mn_el - 1) > 0 && (mn_el - 1 < 100)) {
+            if ((mn_el - 1) % 10 != 0 && mn_el - 1 > 0 && mn_el - 1 < 100) {
               variants.push(mn_el - 1);
             }
-            if ((mx_el + 1) % 10 != 1 && (mx_el + 1) > 0 && (mx_el - 1 < 100)) {
+            if ((mx_el + 1) % 10 != 1 && mx_el + 1 > 0 && mx_el - 1 < 100) {
               variants.push(mx_el + 1);
             }
-          }
-          else {
-            if ((mn_el - 10) > 0 && (mn_el - 10) < 100) {
+          } else {
+            if (mn_el - 10 > 0 && mn_el - 10 < 100) {
               variants.push(mn_el - 10);
             }
-            if ((mx_el + 10 > 0) && (mx_el + 10 < 100)) {
+            if (mx_el + 10 > 0 && mx_el + 10 < 100) {
               variants.push(mx_el + 10);
             }
           }
-          console.log(not_killed, mx_el, mn_el, variants); 
+          console.log(not_killed, mx_el, mn_el, variants);
           let ind = generateRandomNum(0, variants.length - 1);
           next_shoot = variants[ind];
           if (pc_shoots.includes(next_shoot) || graycells.includes(next_shoot)) {
@@ -287,11 +291,9 @@ const Play = () => {
             flag_fourdeck = 0;
             if (start < 3) {
               tripledeckPos = findShips(start, 2, 3, pc_shoots, graycells);
-            }
-            else if (start == 3) {
+            } else if (start == 3) {
               tripledeckPos = findShips(1, 2, 3, pc_shoots, graycells);
-            }
-            else {
+            } else {
               tripledeckPos = findShips(2, 2, 3, pc_shoots, graycells);
             }
           }
@@ -315,14 +317,15 @@ const Play = () => {
           next_shoot = doStep(pc_shoots, graycells, restPos);
         }
       }
-      console.log("fourdeckpos", fourdeckPos);
-      console.log("tripledeck", tripledeckPos);
-      console.log("rest", restPos);
-      console.log("graycells", graycells);
+      console.log('fourdeckpos', fourdeckPos);
+      console.log('tripledeck', tripledeckPos);
+      console.log('rest', restPos);
+      console.log('graycells', graycells);
       console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
         console.log('I hit');
+        setCountBot((count) => count + 1);
         setKill((kill) => [...kill, next_shoot]);
         const f = [...not_killed, next_shoot];
         if (f.length == Math.floor(human_field[next_shoot - 1] / 10)) {
@@ -354,8 +357,7 @@ const Play = () => {
       // console.log(typeof next_shoot)
       if (marks) {
         setShoot((shoot) => [...shoot, ...pos, next_shoot]);
-      }
-      else {
+      } else {
         setShoot((shoot) => [...shoot, next_shoot]);
         setGrayCells((cell) => [...cell, ...pos]);
       }
@@ -366,10 +368,24 @@ const Play = () => {
     }
   };
 
-  console.log("pc_shoots", pc_shoots);
+  console.log('pc_shoots', pc_shoots);
   console.log(player);
 
   // useEffect(() => {}, [player]);
+
+  // console.log('COUNT', countBot);
+  // console.log('COUNT', countHuman);
+
+  useEffect(() => {
+    if (countBot === 20) {
+      setResult('loss');
+      setActiveResult(true);
+    }
+    if (countHuman === 20) {
+      setResult('win');
+      setActiveResult(true);
+    }
+  }, [countBot, countHuman]);
 
   return (
     <>
