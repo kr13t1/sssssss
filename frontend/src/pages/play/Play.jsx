@@ -12,10 +12,10 @@ import { useDifficulty, useMarks, useTime } from '../../store';
 let start = generateRandomNum(1, 4);
 let player = 'human';
 
-const findShips = (start, basic_step, step_for_next_row, taken_pos) => {
+const findShips = (start, basic_step, step_for_next_row, taken_pos, neighbors) => {
   let temp = start;
-  let poses = [];
-  while (temp < 100 - step_for_next_row) {
+  let poses = [start];
+  while (temp <= 100 - basic_step) {
     // console.log(temp, Math.floor(temp / 10));
     if (temp == (Math.floor(temp / 10)) * 10) {
       temp += 1;
@@ -24,17 +24,17 @@ const findShips = (start, basic_step, step_for_next_row, taken_pos) => {
     } else {
       temp += basic_step;
     }
-    if (!taken_pos.includes(temp)) {
+    if (!taken_pos.includes(temp) && !neighbors.includes(temp)) {
       poses.push(temp);
     }
   }
   return poses;
 };
 
-const doStep = (taken_pos, steps_arr) => {
+const doStep = (taken_pos, neighbors, steps_arr) => {
   let ind = generateRandomNum(0, steps_arr.length - 1);
   let res = steps_arr[ind];
-  while (taken_pos.includes(res)) {
+  while (taken_pos.includes(res) || neighbors.includes(res)) {
     ind = (ind + generateRandomNum(0, steps_arr.length - 1)) % steps_arr.length;
     res = steps_arr[ind];
   }
@@ -192,9 +192,11 @@ const Play = () => {
                 ship.map((s, ind) => (i === ind ? { ...s, size: s.size - 1 } : s)),
               );
             } else {
-              for (let j = 0; j < ships[i].position.length; j++) {
-                let neighbors = getNeighbors(ships[i].position[j]);
-                neighbors.forEach((el) => pos.push(el));
+              if (marks) {
+                for (let j = 0; j < ships[i].position.length; j++) {
+                  let neighbors = getNeighbors(ships[i].position[j]);
+                  neighbors.forEach((el) => pos.push(el));
+                }
               }
             }
           }
@@ -206,20 +208,17 @@ const Play = () => {
     }
   };
 
-  const [human_field, setHumanField] = useState(() => {
-    const f = Array(100).fill(0);
-    data.forEach((num) => {
-      num.position.forEach((pos) => {
-        f[pos - 1] = num.id;
-      });
-    });
-    return f;
-  });
+  const [human_field, setHumanField] = useState([]);
+  useEffect(() => {
+    setHumanField(fillField(data));
+  }, []);
+  console.log("human field", human_field);
 
   const [pc_shoots, setShoot] = useState([]);
+  const [graycells, setGrayCells] = useState([]);
   const [not_killed, setKill] = useState([]);
 
-  let fourdeckPos = findShips(start, 4, 5, pc_shoots);
+  let fourdeckPos = findShips(start, 4, 5, pc_shoots, graycells);
   let tripledeckPos;
   let restPos;
   let flag_fourdeck = 1;
@@ -248,8 +247,8 @@ const Play = () => {
           }
           let ind = generateRandomNum(0, variants.length - 1);
           next_shoot = not_killed[0] + variants[ind];
-          while (pc_shoots.includes(next_shoot)) {
-            ind = (ind + 1) % variants.length;
+          while (pc_shoots.includes(next_shoot) || graycells.includes(next_shoot)) {
+            ind = (ind + generateRandomNum(1, variants.length - 1)) % variants.length;
             next_shoot = not_killed[0] + variants[ind];
           }
         } else {
@@ -275,7 +274,7 @@ const Play = () => {
           console.log(not_killed, mx_el, mn_el, variants); 
           let ind = generateRandomNum(0, variants.length - 1);
           next_shoot = variants[ind];
-          if (pc_shoots.includes(next_shoot)) {
+          if (pc_shoots.includes(next_shoot) || graycells.includes(next_shoot)) {
             ind = (ind + 1) % 2;
             next_shoot = variants[ind];
           }
@@ -286,31 +285,40 @@ const Play = () => {
         if (!human_field.find((numb) => numb == 41)) {
           if (flag_fourdeck == 1) {
             flag_fourdeck = 0;
-            tripledeckPos = findShips(start, 2, 3, pc_shoots);
+            if (start < 3) {
+              tripledeckPos = findShips(start, 2, 3, pc_shoots, graycells);
+            }
+            else if (start == 3) {
+              tripledeckPos = findShips(1, 2, 3, pc_shoots, graycells);
+            }
+            else {
+              tripledeckPos = findShips(2, 2, 3, pc_shoots, graycells);
+            }
           }
           if (!human_field.find((numb) => numb == 31) && !human_field.find((numb) => numb == 32)) {
             if (flag_tripledeck == 1) {
               flag_tripledeck = 0;
-              restPos = findShips(start, 1, 1, pc_shoots);
+              restPos = findShips(1, 1, 1, pc_shoots, graycells);
             }
           }
         }
 
         if (human_field.find((numb) => numb == 41)) {
           console.log(fourdeckPos);
-          next_shoot = doStep(pc_shoots, fourdeckPos);
+          next_shoot = doStep(pc_shoots, graycells, fourdeckPos);
         } else if (
           human_field.find((numb) => numb == 31) ||
           human_field.find((numb) => numb == 32)
         ) {
-          next_shoot = doStep(pc_shoots, tripledeckPos);
+          next_shoot = doStep(pc_shoots, graycells, tripledeckPos);
         } else {
-          next_shoot = doStep(pc_shoots, restPos);
+          next_shoot = doStep(pc_shoots, graycells, restPos);
         }
       }
       console.log("fourdeckpos", fourdeckPos);
       console.log("tripledeck", tripledeckPos);
       console.log("rest", restPos);
+      console.log("graycells", graycells);
       console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
@@ -344,7 +352,13 @@ const Play = () => {
       }
       // console.log(pos);
       // console.log(typeof next_shoot)
-      setShoot((shoot) => [...shoot, ...pos, next_shoot]);
+      if (marks) {
+        setShoot((shoot) => [...shoot, ...pos, next_shoot]);
+      }
+      else {
+        setShoot((shoot) => [...shoot, next_shoot]);
+        setGrayCells((cell) => [...cell, ...pos]);
+      }
       // console.log(`human ${human_field}`)
       // console.log(pc_shoots);
       // console.log('not_killed', not_killed);
