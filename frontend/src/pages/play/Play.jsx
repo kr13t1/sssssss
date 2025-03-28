@@ -8,6 +8,7 @@ import { GameField } from '../../components';
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDifficulty, useMarks, useTime } from '../../store';
+import { useTimer } from '@siberiacancode/reactuse'
 
 let start = generateRandomNum(1, 4);
 let player = 'human';
@@ -25,7 +26,7 @@ const strategyOne = (
 ) => {
   let next_shoot;
   if (not_killed.length != 0) {
-    console.log('I have to kill');
+    // console.log('I have to kill');
     if (not_killed.length == 1) {
       let variants = [];
       if (not_killed[0] - 10 > 0 && not_killed[0] - 10 < 100) {
@@ -65,17 +66,17 @@ const strategyOne = (
           variants.push(mx_el + 10);
         }
       }
-      console.log(not_killed, mx_el, mn_el, variants);
+      // console.log(not_killed, mx_el, mn_el, variants);
       let ind = generateRandomNum(0, variants.length - 1);
       next_shoot = variants[ind];
       if (pc_shoots.includes(next_shoot) || graycells.includes(next_shoot)) {
         ind = (ind + 1) % 2;
         next_shoot = variants[ind];
       }
-      console.log(mn_el, mx_el, ind, next_shoot);
+      // console.log(mn_el, mx_el, ind, next_shoot);
     }
   } else {
-    console.log('I didnt hit anything');
+    // console.log('I didnt hit anything');
     if (!human_field.find((numb) => numb == 41)) {
       if (flag_fourdeck == 1) {
         flag_fourdeck = 0;
@@ -96,7 +97,7 @@ const strategyOne = (
     }
 
     if (human_field.find((numb) => numb == 41)) {
-      console.log(fourdeckPos);
+      // console.log(fourdeckPos);
       next_shoot = doStep(pc_shoots, graycells, fourdeckPos);
     } else if (human_field.find((numb) => numb == 31) || human_field.find((numb) => numb == 32)) {
       next_shoot = doStep(pc_shoots, graycells, tripledeckPos);
@@ -173,10 +174,12 @@ const Play = () => {
     SetShips(getRandomPos(ships));
   }, []);
 
+  const minutes = useTimer(time === null ? 999999999999999 : time * 60);
+
   const pcFlatField = fillField(ships);
 
-  console.log('ships', ships);
-  console.log('pcflatfield', pcFlatField);
+  // console.log('ships', ships);
+  // console.log('pcflatfield', pcFlatField);
 
   const { data } = useData();
   const [hit, setHit] = useState([]);
@@ -218,7 +221,7 @@ const Play = () => {
   useEffect(() => {
     setHumanField(fillField(data));
   }, []);
-  console.log('human field', human_field);
+  // console.log('human field', human_field);
 
   const [pc_shoots, setShoot] = useState([]);
   const [graycells, setGrayCells] = useState([]);
@@ -233,7 +236,7 @@ const Play = () => {
   const BotStep = () => {
     if (player == 'pc') {
       let next_shoot;
-      console.log('Im pc');
+      // console.log('Im pc');
       [next_shoot, flag_fourdeck, flag_tripledeck, fourdeckPos, tripledeckPos, restPos] = strategyOne(
         not_killed,
         pc_shoots,
@@ -245,21 +248,21 @@ const Play = () => {
         flag_fourdeck,
         flag_tripledeck,
       );
-      console.log('not_killed', not_killed);
-      console.log('flags', flag_fourdeck, flag_tripledeck);
-      console.log('fourdeckpos', fourdeckPos);
-      console.log('tripledeck', tripledeckPos);
-      console.log('rest', restPos);
-      console.log('graycells', graycells);
-      console.log(next_shoot);
+      // console.log('not_killed', not_killed);
+      // console.log('flags', flag_fourdeck, flag_tripledeck);
+      // console.log('fourdeckpos', fourdeckPos);
+      // console.log('tripledeck', tripledeckPos);
+      // console.log('rest', restPos);
+      // console.log('graycells', graycells);
+      // console.log(next_shoot);
       const pos = [];
       if (human_field[next_shoot - 1] != 0) {
-        console.log('I hit');
+        // console.log('I hit');
         setCountBot((count) => count + 1);
         setKill((kill) => [...kill, next_shoot]);
         const f = [...not_killed, next_shoot];
         if (f.length == Math.floor(human_field[next_shoot - 1] / 10)) {
-          console.log('I clear array');
+          // console.log('I clear array');
           for (let i = 0; i < f.length; i++) {
             setHumanField((ss) => {
               const s = [...ss];
@@ -277,7 +280,7 @@ const Play = () => {
             f[next_shoot - 1] = Math.floor(human_field[next_shoot - 1] / 10);
             return f;
           });
-          console.log(`соседи ${pos}`);
+          // console.log(`соседи ${pos}`);
           setKill([]);
         }
       } else {
@@ -293,7 +296,7 @@ const Play = () => {
   };
 
   useEffect(() => {
-    if (countBot === 20) {
+    if (countBot === 20 || ((minutes.seconds === 0 && minutes.minutes === 0))) {
       setResult('loss');
       setActiveResult(true);
     }
@@ -301,14 +304,14 @@ const Play = () => {
       setResult('win');
       setActiveResult(true);
     }
-  }, [countBot, countHuman]);
+  }, [countBot, countHuman, minutes]);
 
   return (
     <>
       <ResultModal status={activeResult} result={result} />
       <Background>
-        <h2 className={css.h2text}>Сейчас ходит: {player !== 'pc' ? 'игрок' : 'противник'}</h2>
-        <div className={css.fieldContainer}>
+        {time === null ? <h2 className={css.h2text}>Сейчас ходит: {player !== 'pc' ? 'игрок' : 'противник'}.</h2> : <h2 className={css.h2text}>Время - {minutes.minutes}:{minutes.seconds}</h2>
+        }        <div className={css.fieldContainer}>
           <GameField data={human_field} hit={pc_shoots} whose={'player'} />
           <span className={css.TEMP_SPAN} />
           <GameField
